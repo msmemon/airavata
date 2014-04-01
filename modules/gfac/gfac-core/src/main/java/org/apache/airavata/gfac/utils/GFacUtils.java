@@ -495,9 +495,9 @@ public class GFacUtils {
         appJob.setExperimentId((String) jobExecutionContext.getProperty(Constants.PROP_TOPIC));
         appJob.setWorkflowExecutionId(appJob.getExperimentId());
         appJob.setNodeId((String) jobExecutionContext.getProperty(Constants.PROP_WORKFLOW_NODE_ID));
-        appJob.setServiceDescriptionId(jobExecutionContext.getApplicationContext().getServiceDescription().getType().getName());
-        appJob.setHostDescriptionId(jobExecutionContext.getApplicationContext().getHostDescription().getType().getHostName());
-        appJob.setApplicationDescriptionId(jobExecutionContext.getApplicationContext().getApplicationDeploymentDescription().getType().getApplicationName().getStringValue());
+//        appJob.setServiceDescriptionId(jobExecutionContext.getApplicationContext().getServiceDescription().getType().getName());
+//        appJob.setHostDescriptionId(jobExecutionContext.getApplicationContext().getHostDescription().getType().getHostName());
+//        appJob.setApplicationDescriptionId(jobExecutionContext.getApplicationContext().getApplicationDeploymentDescription().getType().getApplicationName().getStringValue());
         return appJob;
     }
 

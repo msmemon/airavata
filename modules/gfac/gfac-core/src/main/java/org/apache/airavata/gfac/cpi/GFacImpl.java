@@ -232,6 +232,7 @@ public class GFacImpl implements GFac {
         try {
             provider.initialize(jobExecutionContext);
         } catch (Exception e) {
+        	e.printStackTrace();
             throw new GFacException("Error while initializing provider " + provider.getClass().getName() + ".", e);
         }
     }
@@ -334,55 +335,15 @@ public class GFacImpl implements GFac {
             }
         }
     }
-
+    
     private void addSecurityContext(HostDescription registeredHost, Properties configurationProperties,
                                     JobExecutionContext jobExecutionContext) throws GFacException {
         RequestData requestData;
         if (registeredHost.getType() instanceof GlobusHostType || registeredHost.getType() instanceof UnicoreHostType
                 || registeredHost.getType() instanceof GsisshHostType) {
-
-            //todo implement a way to get credential management service from configurationData
-            SecurityContextDocument.SecurityContext.CredentialManagementService credentialManagementService = null;
             GSISecurityContext context = null;
-
-            /*
-            if (credentialManagementService != null) {
-                String gatewayId = credentialManagementService.getGatewayId();
-                String tokenId
-                        = credentialManagementService.getTokenId();
-                String portalUser = credentialManagementService.getPortalUser();
-
-                requestData = new RequestData(tokenId, portalUser, gatewayId);
-            } else {
-                requestData = new RequestData("default");
-            }
-
-            try {
-                context = new GSISecurityContext(CredentialReaderFactory.createCredentialStoreReader(), requestData);
-            } catch (Exception e) {
-                   throw new WorkflowException("An error occurred while creating GSI security context", e);
-            }
-
-            if (registeredHost.getType() instanceof GsisshHostType) {
-                GSIAuthenticationInfo authenticationInfo
-                        = new MyProxyAuthenticationInfo(requestData.getMyProxyUserName(), requestData.getMyProxyPassword(), requestData.getMyProxyServerUrl(),
-                        requestData.getMyProxyPort(), requestData.getMyProxyLifeTime(), System.getProperty(Constants.TRUSTED_CERTIFICATE_SYSTEM_PROPERTY));
-                ServerInfo serverInfo = new ServerInfo(requestData.getMyProxyUserName(), registeredHost.getType().getHostAddress());
-
-                Cluster pbsCluster = null;
-                try {
-                    pbsCluster = new PBSCluster(serverInfo, authenticationInfo,
-                            (((HpcApplicationDeploymentType) jobExecutionContext.getApplicationContext().getApplicationDeploymentDescription().getType()).getInstalledParentPath()));
-                } catch (SSHApiException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-
-                context.setPbsCluster(pbsCluster);
-            }        */
-
             requestData = new RequestData("default");
             try {
-                //todo fix this
                 context = new GSISecurityContext(null, requestData);
             } catch (Exception e) {
                 throw new GFacException("An error occurred while creating GSI security context", e);
@@ -417,9 +378,11 @@ public class GFacImpl implements GFac {
                 }
 
                 context.setPbsCluster(pbsCluster);
-            }
+            } 
+            
             jobExecutionContext.addSecurityContext(GSISecurityContext.GSI_SECURITY_CONTEXT, context);
-        } else if (registeredHost.getType() instanceof Ec2HostType) {
+        } 
+        else if (registeredHost.getType() instanceof Ec2HostType) {
             //todo fixthis amazon securitycontext
 //               if (this.configuration.getAmazonSecurityContext() != null) {
 //                   jobExecutionContext.addSecurityContext(AmazonSecurityContext.AMAZON_SECURITY_CONTEXT,

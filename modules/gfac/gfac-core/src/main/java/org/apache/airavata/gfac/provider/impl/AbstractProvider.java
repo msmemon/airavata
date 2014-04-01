@@ -35,7 +35,8 @@ public abstract class AbstractProvider{
 	protected JobStatus status;   //todo we need to remove this and add methods to fill Job details, this is not a property of a provider
 
 	public void initialize(JobExecutionContext jobExecutionContext) throws GFacProviderException, GFacException {
-		registry = RegistryFactory.getDefaultRegistry();
+		//TODO: commented because it throws an exception
+//		registry = RegistryFactory.getDefaultRegistry();
 		details = new JobDetails();
 		status = new JobStatus();
 	}

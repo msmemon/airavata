@@ -43,7 +43,9 @@ public class ApplicationProcessor {
 	public static void generateJobSpecificAppElements(JobDefinitionType value, JobExecutionContext context){
 		
 		String userName = getUserNameFromContext(context);
-		if (userName.equalsIgnoreCase("admin")){
+		
+		//TODO: to be removed
+		if ((null != userName) && (userName.equalsIgnoreCase("admin"))){
 			userName = "CN=zdv575, O=Ultrascan Gateway, C=DE";
 		}
 		

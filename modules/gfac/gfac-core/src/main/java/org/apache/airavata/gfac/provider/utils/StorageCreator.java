@@ -97,12 +97,13 @@ public class StorageCreator {
 		
 		EndpointReferenceType sfEpr= WSUtilities.makeServiceEPR(factoryUrl, StorageFactory.SMF_PORT);
 		
-		String dn = findServerName(factoryUrl, sfEpr);
+		String serverDN = findServerName(factoryUrl, sfEpr);
 		
-		WSUtilities.addServerIdentity(sfEpr, dn);
+		WSUtilities.addServerIdentity(sfEpr, serverDN);
 		
-		secProps.getETDSettings().setReceiver(new X500Principal(dn));
+		secProps.getETDSettings().setReceiver(new X500Principal(serverDN));
 		secProps.getETDSettings().setIssuerCertificateChain(secProps.getCredential().getCertificateChain());
+		secProps.getETDSettings().setExtendTrustDelegation(true);
 		
 		// TODO: remove it afterwards
 		if(userName != null) {

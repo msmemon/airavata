@@ -29,23 +29,17 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
-import java.util.Set;
 
 import javax.security.auth.x500.X500Principal;
 
 import org.apache.airavata.gfac.Constants;
 import org.apache.airavata.gfac.GFacException;
 import org.apache.airavata.gfac.context.JobExecutionContext;
-import org.apache.airavata.gfac.context.security.GSISecurityContext;
+import org.apache.airavata.gfac.context.security.UNICORESecurityContext;
 import org.apache.airavata.gfac.notification.events.StatusChangeEvent;
 import org.apache.airavata.gfac.notification.events.UnicoreJobIDEvent;
 import org.apache.airavata.gfac.provider.GFacProvider;
@@ -85,7 +79,6 @@ import eu.emi.security.authn.x509.helpers.CertificateHelpers;
 import eu.emi.security.authn.x509.helpers.proxy.X509v3CertificateBuilder;
 import eu.emi.security.authn.x509.impl.CertificateUtils;
 import eu.emi.security.authn.x509.impl.CertificateUtils.Encoding;
-import eu.emi.security.authn.x509.impl.DirectoryCertChainValidator;
 import eu.emi.security.authn.x509.impl.KeyAndCertCredential;
 import eu.emi.security.authn.x509.impl.X500NameUtils;
 import eu.unicore.util.httpclient.DefaultClientConfiguration;
@@ -103,10 +96,20 @@ public class BESProvider extends AbstractProvider implements GFacProvider{
         
 	public void initialize(JobExecutionContext jobExecutionContext)
 			throws GFacProviderException, GFacException {
-		log.info("Initializing UNICORE Provider");
+		log.info("Initializing UNICORE Provider..");
 		super.initialize(jobExecutionContext);
-    	initSecurityProperties(jobExecutionContext);
-    	log.debug("initialized security properties");
+		
+        if (secProperties != null)
+            return;
+        UNICORESecurityContext unicoreContext = (UNICORESecurityContext) jobExecutionContext.getSecurityContext(UNICORESecurityContext.UNICORE_SECURITY_CONTEXT);
+        if(log.isDebugEnabled()) {
+        	log.debug("Generating default configuration.");
+        }
+        //TODO: check what credential mode should be used
+        secProperties = unicoreContext.getDefaultConfiguration();
+        if(log.isDebugEnabled()) {
+        	log.debug("Security properties initialized.");
+        }
     }
 
 
@@ -121,14 +124,15 @@ public class BESProvider extends AbstractProvider implements GFacProvider{
         eprt.addNewAddress().setStringValue(factoryUrl);
 
         String userDN = getUserName(jobExecutionContext);
-
+        
+        //TODO: to be removed
         if (userDN == null || userDN.equalsIgnoreCase("admin")) {
             userDN = "CN=zdv575, O=Ultrascan Gateway, C=DE";
         }
-
-        String xlogin = getCNFromUserDN(userDN);
+        
+//        String xlogin = getCNFromUserDN(userDN);
         // create storage
-        StorageCreator storageCreator = new StorageCreator(secProperties, factoryUrl, 5, xlogin);
+        StorageCreator storageCreator = new StorageCreator(secProperties, factoryUrl, 5, null);
 
         StorageClient sc = null;
         try {
@@ -157,7 +161,7 @@ public class BESProvider extends AbstractProvider implements GFacProvider{
             dt.uploadLocalFiles();
 
             FactoryClient factory = null;
-            try {
+           try {
                 factory = new FactoryClient(eprt, secProperties);
             } catch (Exception e) {
                 throw new GFacProviderException(e.getLocalizedMessage(), e);
@@ -182,7 +186,8 @@ public class BESProvider extends AbstractProvider implements GFacProvider{
             }
             log.info("JobID: " + jobId);
             jobExecutionContext.getNotifier().publish(new UnicoreJobIDEvent(jobId));
-            saveApplicationJob(jobExecutionContext, jobDefinition, activityEpr.toString());
+            //TODO: not working
+//            saveApplicationJob(jobExecutionContext, jobDefinition, activityEpr.toString());
 
             factory.getActivityStatus(activityEpr);
             log.info(formatStatusMessage(activityEpr.getAddress().getStringValue(),
@@ -196,17 +201,14 @@ public class BESProvider extends AbstractProvider implements GFacProvider{
                 ActivityStatusType activityStatus = null;
                 try {
                     activityStatus = getStatus(factory, activityEpr);
-                    JobState jobStatus = getApplicationJobStatus(activityStatus);
-                    String jobStatusMessage = "Status of job " + jobId + "is " + jobStatus;
-                    jobExecutionContext.getNotifier().publish(new StatusChangeEvent(jobStatusMessage));
+//                    JobState jobStatus = getApplicationJobStatus(activityStatus);
+//                    String jobStatusMessage = "Status of job " + jobId + "is " + jobStatus;
+//                    jobExecutionContext.getNotifier().publish(new StatusChangeEvent(jobStatusMessage));
                     details.setJobID(jobId);
-                    GFacUtils.updateJobStatus(details, jobStatus);
+//                    GFacUtils.updateJobStatus(details, jobStatus);
                 } catch (UnknownActivityIdentifierFault e) {
                     throw new GFacProviderException(e.getMessage(), e.getCause());
-                }catch (GFacException e) {
-                    throw new GFacProviderException(e.getMessage(), e.getCause());
                 }
-
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
@@ -321,7 +323,9 @@ public class BESProvider extends AbstractProvider implements GFacProvider{
 
     private void saveApplicationJob(JobExecutionContext jobExecutionContext, JobDefinitionType jobDefinition,
                                     String metadata) {
-        ApplicationJob appJob = GFacUtils.createApplicationJob(jobExecutionContext);
+
+    	
+    	ApplicationJob appJob = GFacUtils.createApplicationJob(jobExecutionContext);
         appJob.setJobId(jobId);
         appJob.setJobData(jobDefinition.toString());
         appJob.setSubmittedTime(Calendar.getInstance().getTime());
@@ -388,59 +392,11 @@ public class BESProvider extends AbstractProvider implements GFacProvider{
         if (secProperties != null)
             return;
 
-        GSISecurityContext gssContext = (GSISecurityContext) jobExecutionContext
-                .getSecurityContext(GSISecurityContext.GSI_SECURITY_CONTEXT);
-
-        try {
-            String certLocation = gssContext.getTrustedCertificatePath();
-            List<String> trustedCert = new ArrayList<String>();
-            trustedCert.add(certLocation + "/*.0");
-            trustedCert.add(certLocation + "/*.pem");
-
-            DirectoryCertChainValidator dcValidator = new DirectoryCertChainValidator(trustedCert, Encoding.PEM, -1,
-                    60000, null);
-
-            String userID = getUserName(jobExecutionContext);
-
-            if ( userID == null || "".equals(userID) || userID.equalsIgnoreCase("admin") ) {
-                userID = "CN=zdv575, O=Ultrascan Gateway, C=DE";
-            }
-
-            String userDN = userID.replaceAll("^\"|\"$", "");
-
-            // TODO: should be changed to default airavata server locations
-            KeyAndCertCredential cred = generateShortLivedCertificate(userDN, certLocation
-                    + "/cacert.pem", certLocation
-                    + "/cakey.pem", "ultrascan3");
-            secProperties = new DefaultClientConfiguration(dcValidator, cred);
-
-            // secProperties.doSSLAuthn();
-            secProperties.getETDSettings().setExtendTrustDelegation(true);
-
-            secProperties.setDoSignMessage(true);
-
-            String[] outHandlers = secProperties.getOutHandlerClassNames();
-
-            Set<String> outHandlerLst = null;
-
-            // timeout in milliseconds
-            Properties p = secProperties.getExtraSettings();
-            p.setProperty("http.connection.timeout", "300000");
-            p.setProperty("http.socket.timeout", "300000");
-
-            if (outHandlers == null) {
-                outHandlerLst = new HashSet<String>();
-            } else {
-                outHandlerLst = new HashSet<String>(Arrays.asList(outHandlers));
-            }
-
-            outHandlerLst.add("de.fzj.unicore.uas.security.ProxyCertOutHandler");
-
-            secProperties.setOutHandlerClassNames(outHandlerLst.toArray(new String[outHandlerLst.size()]));
-
-        } catch (Exception e) {
-            throw new GFacProviderException(e.getMessage(), e);
-        }
+        UNICORESecurityContext unicoreContext = (UNICORESecurityContext) jobExecutionContext.getSecurityContext(UNICORESecurityContext.UNICORE_SECURITY_CONTEXT);
+        
+        
+        
+        
     }
 
     //FIXME: Get user details
@@ -494,7 +450,7 @@ public class BESProvider extends AbstractProvider implements GFacProvider{
     }
 
     public void initProperties(Map<String, String> properties) throws GFacProviderException, GFacException {
-
+    		//TODO: use unicore security context
     }
 
     protected KeyAndCertCredential generateShortLivedCertificate(String userDN, String caCertPath, String caKeyPath,

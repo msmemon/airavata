@@ -208,7 +208,9 @@ public class FileDownloader extends FileTransferBase{
 				if(targetStream==null && os!=null){
 					os.close();
 				}
-			}catch(Exception ignored){}
+			}catch(Exception ignored){
+				ignored.printStackTrace();
+			}
 			if(ftc!=null){
 				try{
 					ftc.destroy();

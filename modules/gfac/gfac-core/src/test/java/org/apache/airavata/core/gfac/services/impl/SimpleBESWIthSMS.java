@@ -63,10 +63,10 @@ public class SimpleBESWIthSMS extends AbstractBESTest{
 			appDepType.setJobType(JobTypeType.OPEN_MP);
 		}
 		
-		appDepType.setNodeCount(4);
-		appDepType.setProcessorsPerNode(8);
+		appDepType.setNodeCount(1);
+		appDepType.setProcessorsPerNode(1);
 		
-		appDepType.setMaxWallTime(15);
+		appDepType.setMaxWallTime(5);
 		
 		appDepType.setExecutableLocation("/bin/date");
 		
@@ -74,7 +74,7 @@ public class SimpleBESWIthSMS extends AbstractBESTest{
 		// using jsdl spmd standard
 		extKV.setName("NumberOfProcesses");
 		// this will be transformed into mpiexec -n 4
-		extKV.setStringValue("2"); 
+		extKV.setStringValue("3"); 
 		
 		/*
 		 * Default tmp location

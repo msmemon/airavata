@@ -28,6 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.airavata.commons.gfac.type.ActualParameter;
 import org.apache.airavata.commons.gfac.type.ApplicationDescription;
@@ -158,10 +159,10 @@ public class DataTransferrer {
 				}
 			}
 		}
-		 if (stringMap == null || stringMap.isEmpty()) {
-             throw new GFacProviderException("Empty Output returned from the Application, Double check the application" +
-                     "and ApplicationDescriptor output Parameter Names");
-         }
+//		 if (stringMap == null || stringMap.isEmpty()) {
+//             throw new GFacProviderException("Empty Output returned from the Application, Double check the application" +
+//                     "and ApplicationDescriptor output Parameter Names");
+//         }
 		
 		downloadStdOuts();
 	}
@@ -236,6 +237,6 @@ public class DataTransferrer {
 			String outputDataDirectory = taskData.getAdvancedOutputDataHandling().getOutputDataDir();
 			return outputDataDirectory;
 		}
-		return null;
+		return "target"+File.separator+UUID.randomUUID();
 	}
 }

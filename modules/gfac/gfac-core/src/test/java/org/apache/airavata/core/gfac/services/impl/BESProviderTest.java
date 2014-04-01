@@ -21,8 +21,10 @@ package org.apache.airavata.core.gfac.services.impl;
 *
 */
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -205,7 +207,15 @@ public class BESProviderTest extends AbstractBESTest{
 	
 	@After
 	public void cleanData(){
-		FileUtils.deleteQuietly(new File(tmpFilePath));
+		try {
+			File f = new File(tmpFilePath);
+			if(f.exists()) {
+				FileUtils.deleteDirectory(new File(tmpFilePath));
+			}
+			
+		} catch (IOException e) {
+			fail();
+		}
 	}
 	
 }

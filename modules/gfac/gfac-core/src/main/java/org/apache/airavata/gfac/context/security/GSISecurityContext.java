@@ -66,7 +66,7 @@ public class GSISecurityContext extends AbstractSecurityContext {
     // Set trusted cert path and add provider
     static {
         Security.addProvider(new GlobusProvider());
-        setUpTrustedCertificatePath();
+//        setUpTrustedCertificatePath();
     }
 
     public static void setUpTrustedCertificatePath(String trustedCertificatePath) {
@@ -224,6 +224,7 @@ public class GSISecurityContext extends AbstractSecurityContext {
             return myproxy.get(getRequestData().getMyProxyUserName(), getRequestData().getMyProxyPassword(),
                     getRequestData().getMyProxyLifeTime());
         } catch (MyProxyException e) {
+        	e.printStackTrace();
             throw new GFacException("An error occurred while retrieving default security credentials.", e);
         }
     }

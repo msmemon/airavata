@@ -48,12 +48,16 @@ public class UASDataStagingProcessor {
 		if (context.getInMessageContext().getParameters().size() > 0) {
 			buildDataStagingFromInputContext(context, value, smsUrl, appDepType);
 		}
+
+		/*
+		 * TODO:// should got out 
 		MessageContext outMessage = new MessageContext();
 		ActualParameter a1 = new ActualParameter();
 		a1.getType().changeType(StringParameterType.type);
 		((StringParameterType)a1.getType()).setValue("output/analysis-results.tar");
 		outMessage.addParameter("o1", a1);
 		context.setOutMessageContext(outMessage);
+		*/
 		
 		if (context.getOutMessageContext().getParameters().size() > 0) {
 			buildFromOutputContext(context, value, smsUrl, appDepType);
