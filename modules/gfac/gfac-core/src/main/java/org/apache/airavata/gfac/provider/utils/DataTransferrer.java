@@ -64,6 +64,9 @@ public class DataTransferrer {
 		Map<String, Object> inputParams = jobContext.getInMessageContext()
 				.getParameters();
 		for (String paramKey : inputParams.keySet()) {
+			if(!(inputParams.get(paramKey) instanceof ActualParameter)) {
+				continue;
+			}
 			ActualParameter inParam = (ActualParameter) inputParams
 					.get(paramKey);
 			String paramDataType = inParam.getType().getType().toString();

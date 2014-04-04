@@ -28,6 +28,7 @@ import javax.security.auth.x500.X500Principal;
 import org.oasisOpen.docs.wsrf.sg2.EntryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.unigrids.services.atomic.types.GridFileType;
 import org.unigrids.services.atomic.types.PropertyType;
 import org.unigrids.x2006.x04.services.smf.CreateSMSDocument;
 import org.unigrids.x2006.x04.services.smf.StorageBackendParametersDocument.StorageBackendParameters;
@@ -40,8 +41,6 @@ import de.fzj.unicore.uas.client.StorageFactoryClient;
 import de.fzj.unicore.wsrflite.xmlbeans.WSUtilities;
 import de.fzj.unicore.wsrflite.xmlbeans.client.RegistryClient;
 import de.fzj.unicore.wsrflite.xmlbeans.sg.Registry;
-
-
 import eu.unicore.util.httpclient.DefaultClientConfiguration;
 
 public class StorageCreator {
@@ -103,13 +102,12 @@ public class StorageCreator {
 		
 		secProps.getETDSettings().setReceiver(new X500Principal(serverDN));
 		secProps.getETDSettings().setIssuerCertificateChain(secProps.getCredential().getCertificateChain());
-		secProps.getETDSettings().setExtendTrustDelegation(true);
-		
+
 		// TODO: remove it afterwards
 		if(userName != null) {
 			secProps.getETDSettings().getRequestedUserAttributes2().put("xlogin", new String[]{userName});
 		}
-		
+
 		StorageFactoryClient sfc = new StorageFactoryClient(sfEpr, secProps);
 		
 		if (log.isDebugEnabled()){
@@ -119,8 +117,8 @@ public class StorageCreator {
 		StorageClient sc = null;
 		try{
 			sc=sfc.createSMS(getCreateSMSDocument());
-			
 			String addr=sc.getEPR().getAddress().getStringValue();
+			sc.listProperties(".");
 			log.info(addr);
 			
 		}catch(Exception ex){

@@ -61,6 +61,27 @@ public class DataStagingProcessor {
 
 	}
 	
+	
+	public static void generateDataStagingElements(JobDefinitionType value, JobExecutionContext context, String gridftpEndpoint) throws Exception{
+		
+		HpcApplicationDeploymentType appDepType = (HpcApplicationDeploymentType) context
+				.getApplicationContext().getApplicationDeploymentDescription()
+				.getType();
+
+		
+		if (context.getInMessageContext().getParameters().size() > 0) {
+			buildDataStagingFromInputContext(context, value, gridftpEndpoint, appDepType);
+		}
+
+		if (context.getOutMessageContext().getParameters().size() > 0) {
+			buildFromOutputContext(context, value, gridftpEndpoint, appDepType);
+		}
+
+		createStdOutURIs(value, appDepType, gridftpEndpoint, isUnicoreEndpoint(context));
+
+	}
+
+	
 	private static void createInURIElement(JobDefinitionType value,
 			String endpoint, String inputDir, ActualParameter inParam)
 			throws Exception {

@@ -89,7 +89,6 @@ public class UASDataStagingProcessor {
 			HpcApplicationDeploymentType appDepType, String smsUrl,
 			boolean isUnicore) throws Exception {
 
-		
 		String stdout = ApplicationProcessor.getApplicationStdOut(value, appDepType);
 		
 		String stderr = ApplicationProcessor.getApplicationStdErr(value, appDepType);
@@ -183,7 +182,6 @@ public class UASDataStagingProcessor {
 				}
 			}
 		}
-		
 		return value;
 	}
 
@@ -191,7 +189,6 @@ public class UASDataStagingProcessor {
 	private static void buildDataStagingFromInputContext(JobExecutionContext context, JobDefinitionType value, String smsUrl, HpcApplicationDeploymentType appDepType) 
 			throws Exception {
 		
-		// TODO set data directory
 		Map<String, Object> inputParams = context.getInMessageContext()
 				.getParameters();
 

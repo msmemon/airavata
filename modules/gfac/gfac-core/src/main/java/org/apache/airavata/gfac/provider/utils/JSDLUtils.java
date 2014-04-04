@@ -74,7 +74,7 @@ public class JSDLUtils
 	public static final String NUMBEROFPROCESSES = "NumberOfProcesses";
 	public static final String THREADSPERHOST = "ThreadsPerHost";
 
-	
+
 	
 	public static EnvironmentType addEnvVariable(JobDefinitionType def,String name, String value) {
 		POSIXApplicationType posixApp = getOrCreatePOSIXApplication(def);
