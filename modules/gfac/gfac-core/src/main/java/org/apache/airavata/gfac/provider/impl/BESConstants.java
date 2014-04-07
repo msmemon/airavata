@@ -8,4 +8,6 @@ public interface BESConstants {
 
 	public static final String PROP_ACTIVITY_INFO = "bes.activity.info";
 	
+	public static final String PROP_CLIENT_CONF = "bes.client.config";
+	
 }

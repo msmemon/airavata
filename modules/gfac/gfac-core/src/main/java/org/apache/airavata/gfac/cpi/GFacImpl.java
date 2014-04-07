@@ -221,6 +221,7 @@ public class GFacImpl implements GFac {
                 executeProvider(provider, jobExecutionContext);
                 disposeProvider(provider, jobExecutionContext);
             }
+            
         } catch (Exception e) {
             jobExecutionContext.setProperty(ERROR_SENT, "true");
             jobExecutionContext.getNotifier().publish(new ExecutionFailEvent(e.getCause()));

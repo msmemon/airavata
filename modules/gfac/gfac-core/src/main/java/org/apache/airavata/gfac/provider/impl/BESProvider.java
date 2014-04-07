@@ -23,6 +23,7 @@ package org.apache.airavata.gfac.provider.impl;
 import java.util.Calendar;
 import java.util.Map;
 
+
 import org.apache.airavata.gfac.Constants;
 import org.apache.airavata.gfac.GFacException;
 import org.apache.airavata.gfac.context.JobExecutionContext;
@@ -69,15 +70,16 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
 
     private String jobId;
     
-    
-        
 	public void initialize(JobExecutionContext jobExecutionContext)
 			throws GFacProviderException, GFacException {
 		log.info("Initializing UNICORE Provider..");
 		super.initialize(jobExecutionContext);
-		
-        if (secProperties != null)
-            return;
+		secProperties = (DefaultClientConfiguration)jobExecutionContext.getProperty(PROP_CLIENT_CONF);
+        if (secProperties != null) {
+        	secProperties = secProperties.clone();
+        	return;
+        }
+            
         UNICORESecurityContext unicoreContext = (UNICORESecurityContext) jobExecutionContext.getSecurityContext(UNICORESecurityContext.UNICORE_SECURITY_CONTEXT);
         if(log.isDebugEnabled()) {
         	log.debug("Generating default configuration.");
@@ -99,6 +101,9 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
 
         EndpointReferenceType eprt = EndpointReferenceType.Factory.newInstance();
         eprt.addNewAddress().setStringValue(factoryUrl);
+        
+//		WSUtilities.addServerIdentity(eprt, serverDN);
+
 
         String userDN = getUserName(jobExecutionContext);
         
@@ -213,7 +218,7 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
             activityInfo = new ActivityInfo();
             activityInfo.setActivityEPR(activityEpr);
             activityInfo.setActivityStatusDoc(activityStatus);
-            jobExecutionContext.getOutMessageContext().addParameter(PROP_ACTIVITY_INFO, activityInfo);
+            jobExecutionContext.setProperty(PROP_ACTIVITY_INFO, activityInfo);
             
         } catch (UnknownActivityIdentifierFault e1) {
             throw new GFacProviderException(e1.getLocalizedMessage(), e1);

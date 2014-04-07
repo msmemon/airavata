@@ -71,7 +71,7 @@ public class StorageCreator {
 	private String userName;
 	
 	public StorageCreator(DefaultClientConfiguration secProps, String besUrl, int initialLifetime, String storageType, String userName) {
-		this.secProps = secProps; 
+		this.secProps = secProps.clone(); 
 		this.factoryUrl = getStorageFactoryUrl(besUrl);
 		this.storageType = storageType;
 		this.initialLifeTime = initialLifetime;
@@ -97,11 +97,10 @@ public class StorageCreator {
 		EndpointReferenceType sfEpr= WSUtilities.makeServiceEPR(factoryUrl, StorageFactory.SMF_PORT);
 		
 		String serverDN = findServerName(factoryUrl, sfEpr);
-		
 		WSUtilities.addServerIdentity(sfEpr, serverDN);
 		
 		secProps.getETDSettings().setReceiver(new X500Principal(serverDN));
-		secProps.getETDSettings().setIssuerCertificateChain(secProps.getCredential().getCertificateChain());
+//		secProps.getETDSettings().setIssuerCertificateChain(secProps.getCredential().getCertificateChain());
 
 		// TODO: remove it afterwards
 		if(userName != null) {
@@ -117,10 +116,6 @@ public class StorageCreator {
 		StorageClient sc = null;
 		try{
 			sc=sfc.createSMS(getCreateSMSDocument());
-			String addr=sc.getEPR().getAddress().getStringValue();
-			sc.listProperties(".");
-			log.info(addr);
-			
 		}catch(Exception ex){
 			log.error("Could not create storage",ex);
 			throw new Exception(ex);

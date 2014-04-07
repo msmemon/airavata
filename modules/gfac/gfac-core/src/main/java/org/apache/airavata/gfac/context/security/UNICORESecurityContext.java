@@ -104,8 +104,12 @@ public class UNICORESecurityContext extends GSISecurityContext {
 		}
 		
 		secProperties.getETDSettings().setExtendTrustDelegation(true);
-		secProperties.setDoSignMessage(true);
-		secProperties.getETDSettings().setIssuerCertificateChain(secProperties.getCredential().getCertificateChain());
+//		secProperties.setMessageLogging(true);
+//		secProperties.setDoSignMessage(true);
+//		secProperties.getETDSettings().setIssuerCertificateChain(secProperties.getCredential().getCertificateChain());
+		
+		
+		
 		return secProperties;
 	}
 	

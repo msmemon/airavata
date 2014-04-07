@@ -12,6 +12,7 @@
         <xb:package>org.apache.airavata.schemas.gfac</xb:package>
     </xb:namespace>
     
+    <!-- 
     <xb:namespace uri="http://schemas.ggf.org/jsdl/2005/11/jsdl">
         <xb:package>org.ogf.schemas.jsdl</xb:package>
     </xb:namespace>
@@ -27,5 +28,6 @@
     <xb:namespace uri="http://schemas.ggf.org/jsdl/2006/07/jsdl-hpcpa">
         <xb:package>org.ogf.schemas.jsdl.hpcpa</xb:package>
     </xb:namespace>
+    -->
       
 </xb:config>
