@@ -101,7 +101,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -440,7 +440,8 @@
         </dependency-->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk16</artifactId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            
         </dependency>
         <dependency>
             <groupId>org.apache.openjpa</groupId>
