@@ -37,6 +37,8 @@ import org.apache.airavata.gfac.context.ApplicationContext;
 import org.apache.airavata.gfac.context.JobExecutionContext;
 import org.apache.airavata.gfac.context.MessageContext;
 import org.apache.airavata.gfac.context.security.GSISecurityContext;
+import org.apache.airavata.gfac.context.security.UNICORESecurityContext;
+import org.apache.airavata.schemas.gfac.JobDirectoryModeDocument.JobDirectoryMode;
 import org.apache.airavata.schemas.gfac.JobTypeType;
 import org.apache.airavata.schemas.gfac.UnicoreHostType;
 import org.apache.airavata.schemas.wec.ContextHeaderDocument;
@@ -49,13 +51,14 @@ public abstract class AbstractBESTest extends GFacBaseTestCase {
 	protected JobExecutionContext jobExecutionContext;
 	private String userName = "";
 
-//	public static final String[] hostArray = new String[] { "https://zam1161v01.zam.kfa-juelich.de:8002/INTEROP1/services/BESFactory?res=default_bes_factory" };
+	public static final String[] hostArray = new String[] { "https://zam1161v01.zam.kfa-juelich.de:8002/INTEROP1/services/BESFactory?res=default_bes_factory" };
 
-	 public static final String[] hostArray = new String[] {
-	 "https://deisa-unic.fz-juelich.de:9111/FZJ_JUROPA/services/BESFactory?res=default_bes_factory"
-	 };
+//	 public static final String[] hostArray = new String[] {
+//	 "https://deisa-unic.fz-juelich.de:9111/FZJ_JUROPA/services/BESFactory?res=default_bes_factory"
+//	 };
 	 
-	
+	 
+	 
 //	 public static final String[] hostArray = new String[] {
 //	 "https://daemon.alamo.futuregrid.org:8082/ALAMO/services/BESFactory?res=default_bes_factory"
 //	 };
@@ -97,8 +100,7 @@ public abstract class AbstractBESTest extends GFacBaseTestCase {
 		jobExecutionContext.setApplicationContext(getApplicationContext());
 		jobExecutionContext.setInMessageContext(getInMessageContext());
 		jobExecutionContext.setOutMessageContext(getOutMessageContext());
-		jobExecutionContext.addSecurityContext(
-				GSISecurityContext.GSI_SECURITY_CONTEXT, getSecurityContext());
+		jobExecutionContext.addSecurityContext(UNICORESecurityContext.UNICORE_SECURITY_CONTEXT, getSecurityContext());
 
 	}
 
@@ -130,6 +132,7 @@ public abstract class AbstractBESTest extends GFacBaseTestCase {
 		host.getType().setHostName("DEMO-INTEROP-SITE");
 		((UnicoreHostType) host.getType())
 				.setUnicoreBESEndPointArray(hostArray);
+		
 		((UnicoreHostType) host.getType())
 				.setGridFTPEndPointArray(new String[] { gridftpAddress });
 		return host;
@@ -169,5 +172,19 @@ public abstract class AbstractBESTest extends GFacBaseTestCase {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	
+    public UNICORESecurityContext getSecurityContext() throws Exception {
+        UNICORESecurityContext.setUpTrustedCertificatePath("/home/m.memon/.globus/certificates");
+        RequestData requestData = new RequestData();
+        requestData.setMyProxyServerUrl("myproxy.teragrid.org");
+        requestData.setMyProxyUserName("*********");
+        requestData.setMyProxyPassword("'''''''''");
+        requestData.setMyProxyLifeTime(3600);
+//        CredentialReader credentialReader = new CredentialReaderImpl(getDbUtil());
+        return new UNICORESecurityContext(null, requestData);
+    }
 
+	
+
+	
 }
