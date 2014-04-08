@@ -12,9 +12,10 @@ import org.apache.airavata.gfac.cpi.GFacImpl;
 import org.apache.airavata.schemas.gfac.ApplicationDeploymentDescriptionType;
 import org.apache.airavata.schemas.gfac.ExtendedKeyValueType;
 import org.apache.airavata.schemas.gfac.HpcApplicationDeploymentType;
+import org.apache.airavata.schemas.gfac.JobDirectoryModeDocument.JobDirectoryMode;
 import org.apache.airavata.schemas.gfac.JobTypeType;
-import org.apache.airavata.schemas.gfac.StringParameterType;
 import org.apache.airavata.schemas.gfac.URIParameterType;
+import org.apache.airavata.schemas.gfac.UnicoreHostType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,8 +32,12 @@ public class SimpleBESWIthSMS extends AbstractBESTest{
 		ApplicationContext appContext = getApplicationContext();
 		appContext.setApplicationDeploymentDescription(getApplicationDesc(jobType));
 		jobExecutionContext.setApplicationContext(appContext);
+		((UnicoreHostType) jobExecutionContext.getApplicationContext()
+				.getHostDescription().getType())
+				.setJobDirectoryMode(JobDirectoryMode.SMS_BYTE_IO);
 		GFacImpl gFacAPI = new GFacImpl();
 		gFacAPI.submitJob(jobExecutionContext);
+		gFacAPI.invokeOutFlowHandlers(null, null);
 	}
 	
 	
@@ -107,10 +112,10 @@ public class SimpleBESWIthSMS extends AbstractBESTest{
 //	    a1.getType().changeType(StringParameterType.type);
 //	    ((StringParameterType)a1.getType()).setValue("hpcinput-uslims3.uthscsa.edu-uslims3_cauma3-01594.tar");
 //	    inMessage.addParameter("arg1", a1);
-//	        
+	        
 //        ActualParameter i1 = new ActualParameter();
 //        i1.getType().changeType(URIParameterType.type);
-//        ((URIParameterType)i1.getType()).setValue("file:///"+System.getProperty("user.home")+"/juelich-us3/hpcinput-uslims3.uthscsa.edu-uslims3_cauma3-01594.tar");
+//        ((URIParameterType)i1.getType()).setValue("file:///"+System.getProperty("user.home")+"/hpcinput.tar");
 //        inMessage.addParameter("i1", i1);
 
         return inMessage;
