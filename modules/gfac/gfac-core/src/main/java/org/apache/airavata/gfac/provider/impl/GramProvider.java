@@ -190,7 +190,7 @@ public class GramProvider extends AbstractProvider implements GFacProvider{
                  * batch.
                 * The third boolean is to specify to use the full proxy and not delegate a limited proxy.
                 */
-                job.request(true, gateKeeper, false, false);
+                job.request(gateKeeper, false, false);
 
                 // Single boolean to track all authentication failures, therefore we need to re-initialize
                 // this here
@@ -264,7 +264,7 @@ public class GramProvider extends AbstractProvider implements GFacProvider{
             */
             try {
 
-                job.request(true, gateKeeper, false, false);
+                job.request(gateKeeper, false, false);
                 renewCredentialsAttempt = false;
 
             } catch (GramException e) {

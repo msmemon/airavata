@@ -21,6 +21,7 @@
 package org.apache.airavata.job.monitor;
 
 import com.google.common.eventbus.EventBus;
+
 import org.apache.airavata.common.utils.Constants;
 import org.apache.airavata.job.monitor.core.Monitor;
 import org.apache.airavata.job.monitor.core.PullMonitor;
@@ -28,6 +29,7 @@ import org.apache.airavata.job.monitor.core.PushMonitor;
 import org.apache.airavata.job.monitor.event.MonitorPublisher;
 import org.apache.airavata.job.monitor.exception.AiravataMonitorException;
 import org.apache.airavata.job.monitor.impl.LocalJobMonitor;
+import org.apache.airavata.job.monitor.impl.bes.BESJobMonitor;
 import org.apache.airavata.job.monitor.impl.pull.qstat.QstatMonitor;
 import org.apache.airavata.job.monitor.impl.push.amqp.AMQPMonitor;
 import org.apache.airavata.job.monitor.util.CommonUtils;
@@ -109,6 +111,17 @@ public class MonitorManager {
         localJobMonitor = monitor;
     }
 
+    /**
+     * This can be use to add an BES monitoring object to the monitor system
+     * and tihs method will take care of the initialization
+     * todo may be we need to move this to some other class
+     * @param monitor
+     */
+    public void addBESMonitor(BESJobMonitor monitor) {
+        monitor.setPublisher(this.getMonitorPublisher());
+        monitor.setQueue(this.getPullQueue());
+        addPullMonitor(monitor);
+    }
     /**
      * This can be used to adda a QstatMonitor and it will take care of
      * the initialization of QstatMonitor
