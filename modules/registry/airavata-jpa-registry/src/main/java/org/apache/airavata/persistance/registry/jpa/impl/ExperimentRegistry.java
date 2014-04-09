@@ -57,10 +57,13 @@ public class ExperimentRegistry {
                 logger.error("User does not exist in the system..");
                 throw new Exception("User does not exist in the system..");
             }
-            experimentID = getExperimentID(experiment.getName());
+//            experimentID = getExperimentID(experiment.getName());
+            //temp
+            experimentID = "e1";
             ExperimentResource experimentResource = new ExperimentResource();
             experimentResource.setExpID(experimentID);
-            experimentResource.setExpName(experiment.getName());
+//            experimentResource.setExpName(experiment.getName());
+            experimentResource.setExpName("experiment1");
             experimentResource.setExecutionUser(experiment.getUserName());
             experimentResource.setGateway(gatewayResource);
             ProjectResource project;

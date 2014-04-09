@@ -53,6 +53,7 @@ import org.apache.airavata.registry.api.AiravataUser;
 import org.apache.airavata.registry.api.Gateway;
 import org.apache.airavata.registry.api.PasswordCallback;
 import org.apache.airavata.registry.api.exception.RegistryException;
+import org.apache.airavata.registry.services.RegistryServiceStub;
 import org.apache.airavata.workflow.model.wf.WorkflowInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,10 +213,10 @@ public class AiravataClient extends Observable implements AiravataAPI {
 
         while (!registryServiceStarted) {
             try {
-                org.apache.airavata.registry.stub.RegistryServiceStub stub =
-                        new org.apache.airavata.registry.stub.RegistryServiceStub(url);
-                registryServiceStarted = stub.isRegistryServiceStarted().getIsRegistryServiceStartedResponse().
-                        getReturn();
+                RegistryServiceStub stub =
+                        new RegistryServiceStub(url);
+                
+                registryServiceStarted = stub.isRegistryServiceStarted().get_return();
             } catch (Exception e) {
                 exception = e;
             }

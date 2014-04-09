@@ -20,6 +20,7 @@
 */
 package org.apache.airavata.client.airavata;
 
+import org.apache.airavata.registry.services.RegistryServiceStub;
 import org.junit.Test;
 
 public class AiravataClientTest {
@@ -94,10 +95,11 @@ public class AiravataClientTest {
 
     //@Test
     public void testRegistryServiceInvocation() throws Exception {
-        org.apache.airavata.registry.stub.RegistryServiceStub stub =
-                new org.apache.airavata.registry.stub.RegistryServiceStub("http://localhost:8080/axis2/services/RegistryService?wsdl");
-        boolean registryServiceStarted = stub.isRegistryServiceStarted().getIsRegistryServiceStartedResponse().
-                getReturn();
+        RegistryServiceStub stub =
+                new RegistryServiceStub("http://localhost:8080/axis2/services/RegistryService?wsdl");
+        boolean registryServiceStarted = stub.isRegistryServiceStarted().get_return();
+        
+        
 
         System.out.println(registryServiceStarted);
     }

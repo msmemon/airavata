@@ -50,15 +50,15 @@ public class QstatMonitorTest {
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty("myproxy.user", "ogce");
-        System.setProperty("myproxy.password", "");
-        System.setProperty("basedir", "/Users/lahirugunathilake/work/airavata/sandbox/gsissh");
-        System.setProperty("gsi.working.directory", "/home/ogce");
+        System.setProperty("myproxy.user", "msmemon");
+        System.setProperty("myproxy.password", "sh#8ba#9");
+        System.setProperty("basedir", "/home/msmemon");
+        System.setProperty("gsi.working.directory", "/home/msmemon");
         myProxyUserName = System.getProperty("myproxy.user");
         myProxyPassword = System.getProperty("myproxy.password");
         workingDirectory = System.getProperty("gsi.working.directory");
         String pomDirectory = System.getProperty("basedir");
-        certificateLocation = "/Users/lahirugunathilake/Downloads/certificates";
+        certificateLocation = "/home/m.memon/.globus/certificates";
         if (myProxyUserName == null || myProxyPassword == null || workingDirectory == null) {
             System.out.println(">>>>>> Please run tests with my proxy user name and password. " +
                     "E.g :- mvn clean install -Dmyproxy.user=xxx -Dmyproxy.password=xxx -Dgsi.working.directory=/path<<<<<<<");
@@ -89,7 +89,7 @@ public class QstatMonitorTest {
                 7512, 17280000, certificateLocation);
 
         // Server info
-        ServerInfo serverInfo = new ServerInfo("ogce", hostDescription.getType().getHostAddress());
+        ServerInfo serverInfo = new ServerInfo("msmemon", hostDescription.getType().getHostAddress());
 
 
         Cluster pbsCluster = new PBSCluster(serverInfo, authenticationInfo, CommonUtils.getPBSJobManager("/opt/torque/bin/"));
@@ -111,7 +111,7 @@ public class QstatMonitorTest {
         jobDescriptor.setProcessesPerNode(1);
         jobDescriptor.setQueueName("normal");
         jobDescriptor.setMaxWallTime("60");
-        jobDescriptor.setAcountString("sds128");
+        jobDescriptor.setAcountString("cmu128");
         List<String> inputs = new ArrayList<String>();
         jobDescriptor.setOwner("ogce");
         inputs.add("Hello World");
@@ -131,7 +131,7 @@ public class QstatMonitorTest {
             }
         }
         try {
-            Thread.sleep(10000000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import org.apache.airavata.gfac.cpi.GFacImpl;
 import org.apache.airavata.job.monitor.MonitorID;
 import org.apache.airavata.job.monitor.state.JobStatus;

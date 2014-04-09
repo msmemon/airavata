@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 public class ResourceUtils {
     private final static Logger logger = LoggerFactory.getLogger(ResourceUtils.class);
     private static final String PERSISTENCE_UNIT_NAME = "airavata_data";
+    
     protected static EntityManagerFactory factory;
 
     private static Lock lock = new ReentrantLock();

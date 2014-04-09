@@ -21,17 +21,21 @@
 package org.apache.airavata.orchestrator.core;
 
 import org.apache.airavata.common.utils.AiravataUtils;
+import org.apache.airavata.model.workspace.experiment.AdvancedInputDataHandling;
+import org.apache.airavata.model.workspace.experiment.AdvancedOutputDataHandling;
+import org.apache.airavata.model.workspace.experiment.ComputationalResourceScheduling;
+import org.apache.airavata.model.workspace.experiment.Experiment;
+import org.apache.airavata.model.workspace.experiment.QualityOfServiceParams;
+import org.apache.airavata.model.workspace.experiment.UserConfigurationData;
 import org.apache.airavata.orchestrator.cpi.Orchestrator;
 import org.apache.airavata.orchestrator.cpi.impl.SimpleOrchestratorImpl;
 import org.apache.airavata.persistance.registry.jpa.impl.RegistryImpl;
 import org.apache.airavata.registry.cpi.ChildDataType;
 import org.apache.airavata.registry.cpi.ParentDataType;
 import org.apache.airavata.registry.cpi.Registry;
-import org.junit.Assert;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
 
 import java.util.*;
 
@@ -42,7 +46,7 @@ public class OrchestratorTestWithGRAM extends BaseOrchestratorTest {
 
     private String experimentID;
 
-    @BeforeTest
+    @Before
     public void setUp() throws Exception {
         AiravataUtils.setExecutionAsServer();
         super.setUp();
@@ -52,34 +56,36 @@ public class OrchestratorTestWithGRAM extends BaseOrchestratorTest {
 
     private void createJobRequestWithDocuments() throws Exception{
         //Using new airavata-api methods to store experiment metadata
-//        BasicMetadata basicMetadata = new BasicMetadata();
-//        basicMetadata.setExperimentName("test-trestles");
-//        basicMetadata.setUserName("admin");
-//        basicMetadata.setUserNameIsSet(true);
-//        basicMetadata.setProjectID("default");
-//
-//        AdvancedInputDataHandling advancedInputDataHandling = new AdvancedInputDataHandling();
-//        AdvancedOutputDataHandling advancedOutputDataHandling = new AdvancedOutputDataHandling();
-//        ComputationalResourceScheduling computationalResourceScheduling = new ComputationalResourceScheduling();
-//        QualityOfServiceParams qualityOfServiceParams = new QualityOfServiceParams();
-//        ConfigurationData configurationData = new ConfigurationData();
-//
-//        HashMap<String, String> exInputs = new HashMap<String, String>();
-//        exInputs.put("echo_input", "echo_output=hello");
-//
-//        configurationData.setExperimentInputs(exInputs);
-//        configurationData.setAdvanceInputDataHandling(advancedInputDataHandling);
-//        configurationData.setAdvanceOutputDataHandling(advancedOutputDataHandling);
-//        configurationData.setComputationalResourceScheduling(computationalResourceScheduling);
-//        configurationData.setQosParams(qualityOfServiceParams);
-//        configurationData.setApplicationId("SimpleEcho1");
-//
-//        Registry registry = new RegistryImpl();
-//        experimentID = (String) registry.add(ParentDataType.EXPERIMENT, basicMetadata);
-//        registry.add(ChildDataType.EXPERIMENT_CONFIGURATION_DATA, configurationData, experimentID);
+        Experiment basicMetadata = new Experiment();
+        basicMetadata.setExperimentID("t1");
+        basicMetadata.setUserName("admin");
+        basicMetadata.setUserNameIsSet(true);
+        basicMetadata.setProjectID("default");
+
+        AdvancedInputDataHandling advancedInputDataHandling = new AdvancedInputDataHandling();
+        AdvancedOutputDataHandling advancedOutputDataHandling = new AdvancedOutputDataHandling();
+        ComputationalResourceScheduling computationalResourceScheduling = new ComputationalResourceScheduling();
+        QualityOfServiceParams qualityOfServiceParams = new QualityOfServiceParams();
+        UserConfigurationData configurationData = new UserConfigurationData();
+
+        HashMap<String, String> exInputs = new HashMap<String, String>();
+        exInputs.put("echo_input", "echo_output=hello");
+
+//      configurationData.setExperimentInputs(exInputs);
+        
+        configurationData.setAdvanceInputDataHandling(advancedInputDataHandling);
+        configurationData.setAdvanceOutputDataHandling(advancedOutputDataHandling);
+        configurationData.setComputationalResourceScheduling(computationalResourceScheduling);
+        configurationData.setQosParams(qualityOfServiceParams);
+        basicMetadata.setUserConfigurationData(configurationData);
+        Registry registry = new RegistryImpl();
+        experimentID = (String) registry.add(ParentDataType.EXPERIMENT, basicMetadata);
+        Object  a = registry.add(ChildDataType.EXPERIMENT_CONFIGURATION_DATA, configurationData, experimentID);
+        
+        
     }
 
-    @Test
+    @org.junit.Test
     public void noDescriptorTest() throws Exception {
 
 //        boolean b = orchestrator.launchExperiment(experimentID);
@@ -89,6 +95,10 @@ public class OrchestratorTestWithGRAM extends BaseOrchestratorTest {
 //        } else {
 //            Assert.assertFalse(true);
 //        }
+    	
+    	orchestrator.launchExperiment("e1", "t1");
+    	
+    	
     }
 
 
