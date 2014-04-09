@@ -108,7 +108,8 @@
 		</complexContent>
 	</complexType>
 	
-	<!-- some comments -->
+	<!-- some test comments -->
+	<!--  some more comments -->
 	<element name="jobDirectoryMode">
 		<simpleType>
 			<restriction base="string">
