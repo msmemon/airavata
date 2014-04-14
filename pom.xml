@@ -464,7 +464,7 @@
                 <module>modules/workflow-model</module>
                 <module>modules/commons</module>
                 <module>modules/registry</module>
-                <module>modules/airavata-client</module>
+                <!-- module>modules/airavata-client</module>-->
                 <module>modules/security</module>
                 <module>modules/credential-store</module>
                 <module>modules/orchestrator</module>
@@ -473,7 +473,7 @@
                 <module>modules/test-suite</module>
                 <module>modules/distribution</module>
                 <module>modules/integration-tests</module>
-                <module>modules/configuration</module>
+                <!-- module>modules/configuration</module> -->
                 <module>modules/ws-messenger</module>
 		<!--module>modules/rest</module-->
                 <!--module>samples</module-->

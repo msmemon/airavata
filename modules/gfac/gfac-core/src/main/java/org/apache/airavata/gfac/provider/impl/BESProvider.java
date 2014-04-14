@@ -23,7 +23,6 @@ package org.apache.airavata.gfac.provider.impl;
 import java.util.Calendar;
 import java.util.Map;
 
-
 import org.apache.airavata.gfac.Constants;
 import org.apache.airavata.gfac.GFacException;
 import org.apache.airavata.gfac.context.JobExecutionContext;
@@ -36,6 +35,7 @@ import org.apache.airavata.gfac.provider.utils.ActivityInfo;
 import org.apache.airavata.gfac.provider.utils.DataServiceInfo;
 import org.apache.airavata.gfac.provider.utils.JSDLGenerator;
 import org.apache.airavata.gfac.utils.GFacUtils;
+import org.apache.airavata.model.workspace.experiment.JobDetails;
 import org.apache.airavata.model.workspace.experiment.JobState;
 import org.apache.airavata.registry.api.workflow.ApplicationJob;
 import org.apache.airavata.registry.api.workflow.ApplicationJob.ApplicationJobStatus;
@@ -129,6 +129,8 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
             }
 
            FactoryClient factory = null;
+           JobDetails jobDetails = new JobDetails();
+           
            try {
                 factory = new FactoryClient(eprt, secProperties);
             } catch (Exception e) {
@@ -154,72 +156,74 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
                 jobId = new Long(Calendar.getInstance().getTimeInMillis()).toString();
             }
             log.info("JobID: " + jobId);
-            jobExecutionContext.getNotifier().publish(new UnicoreJobIDEvent(jobId));
+//            jobExecutionContext.getNotifier().publish(new UnicoreJobIDEvent(jobId));
             //TODO: not working
 //            saveApplicationJob(jobExecutionContext, jobDefinition, activityEpr.toString());
-
+            jobDetails.setJobDescription(activityEpr.toString());
+            jobDetails.setJobID(jobId);
+            jobExecutionContext.setJobDetails(jobDetails);
             
             log.info(formatStatusMessage(activityEpr.getAddress().getStringValue(),
                     factory.getActivityStatus(activityEpr).toString()));
 
             // TODO publish the status messages to the message bus
-            while ((factory.getActivityStatus(activityEpr) != ActivityStateEnumeration.FINISHED)
-                    && (factory.getActivityStatus(activityEpr) != ActivityStateEnumeration.FAILED)
-                    && (factory.getActivityStatus(activityEpr) != ActivityStateEnumeration.CANCELLED)) {
-
-                ActivityStatusType activityStatus = null;
-                try {
-                    activityStatus = getStatus(factory, activityEpr);
-                  //TODO: not working
-//                    JobState jobStatus = getApplicationJobStatus(activityStatus);
-//                    String jobStatusMessage = "Status of job " + jobId + "is " + jobStatus;
-//                    jobExecutionContext.getNotifier().publish(new StatusChangeEvent(jobStatusMessage));
-                    details.setJobID(jobId);
-//                    GFacUtils.updateJobStatus(details, jobStatus);
-                } catch (UnknownActivityIdentifierFault e) {
-                    throw new GFacProviderException(e.getMessage(), e.getCause());
-                }
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                }
-                continue;
-            }
-
-            ActivityStatusType activityStatus = null;
-            try {
-                activityStatus = getStatus(factory, activityEpr);
-            } catch (UnknownActivityIdentifierFault e) {
-                throw new GFacProviderException(e.getMessage(), e.getCause());
-            }
-
-            log.info(formatStatusMessage(activityEpr.getAddress().getStringValue(), activityStatus.getState()
-                    .toString()));
-            
-            if ((activityStatus.getState() == ActivityStateEnumeration.FAILED)) {
-                String error = activityStatus.getFault().getFaultcode().getLocalPart() + "\n"
-                        + activityStatus.getFault().getFaultstring() + "\n EXITCODE: " + activityStatus.getExitCode();
-                log.info(error);
-            } else if (activityStatus.getState() == ActivityStateEnumeration.CANCELLED) {
-                String experimentID = (String) jobExecutionContext.getProperty(Constants.PROP_TOPIC);
-                JobState jobStatus = JobState.CANCELED;
-                String jobStatusMessage = "Status of job " + jobId + "is " + jobStatus;
-                jobExecutionContext.getNotifier().publish(new StatusChangeEvent(jobStatusMessage));
-                details.setJobID(jobId);
-                try {
-					GFacUtils.saveJobStatus(details, jobStatus, jobExecutionContext.getTaskData().getTaskID());
-				} catch (GFacException e) {
-					 throw new GFacProviderException(e.getLocalizedMessage(),e);
-				}
-                throw new GFacProviderException(experimentID + "Job Canceled");
-            }
-            
-            ActivityInfo activityInfo;
-            activityInfo = new ActivityInfo();
-            activityInfo.setActivityEPR(activityEpr);
-            activityInfo.setActivityStatusDoc(activityStatus);
-            jobExecutionContext.setProperty(PROP_ACTIVITY_INFO, activityInfo);
-            
+//            while ((factory.getActivityStatus(activityEpr) != ActivityStateEnumeration.FINISHED)
+//                    && (factory.getActivityStatus(activityEpr) != ActivityStateEnumeration.FAILED)
+//                    && (factory.getActivityStatus(activityEpr) != ActivityStateEnumeration.CANCELLED)) {
+//
+//                ActivityStatusType activityStatus = null;
+//                try {
+//                    activityStatus = getStatus(factory, activityEpr);
+//                  //TODO: not working
+////                    JobState jobStatus = getApplicationJobStatus(activityStatus);
+////                    String jobStatusMessage = "Status of job " + jobId + "is " + jobStatus;
+////                    jobExecutionContext.getNotifier().publish(new StatusChangeEvent(jobStatusMessage));
+//                    details.setJobID(jobId);
+////                    GFacUtils.updateJobStatus(details, jobStatus);
+//                } catch (UnknownActivityIdentifierFault e) {
+//                    throw new GFacProviderException(e.getMessage(), e.getCause());
+//                }
+//                try {
+//                    Thread.sleep(5000);
+//                } catch (InterruptedException e) {
+//                }
+//                continue;
+//            }
+//
+//            ActivityStatusType activityStatus = null;
+//            try {
+//                activityStatus = getStatus(factory, activityEpr);
+//            } catch (UnknownActivityIdentifierFault e) {
+//                throw new GFacProviderException(e.getMessage(), e.getCause());
+//            }
+//
+//            log.info(formatStatusMessage(activityEpr.getAddress().getStringValue(), activityStatus.getState()
+//                    .toString()));
+//            
+//            if ((activityStatus.getState() == ActivityStateEnumeration.FAILED)) {
+//                String error = activityStatus.getFault().getFaultcode().getLocalPart() + "\n"
+//                        + activityStatus.getFault().getFaultstring() + "\n EXITCODE: " + activityStatus.getExitCode();
+//                log.info(error);
+//            } else if (activityStatus.getState() == ActivityStateEnumeration.CANCELLED) {
+//                String experimentID = (String) jobExecutionContext.getProperty(Constants.PROP_TOPIC);
+//                JobState jobStatus = JobState.CANCELED;
+//                String jobStatusMessage = "Status of job " + jobId + "is " + jobStatus;
+////                jobExecutionContext.getNotifier().publish(new StatusChangeEvent(jobStatusMessage));
+//                details.setJobID(jobId);
+//                try {
+//					GFacUtils.saveJobStatus(details, jobStatus, jobExecutionContext.getTaskData().getTaskID());
+//				} catch (GFacException e) {
+//					 throw new GFacProviderException(e.getLocalizedMessage(),e);
+//				}
+//                throw new GFacProviderException(experimentID + "Job Canceled");
+//            }
+//            
+//            ActivityInfo activityInfo;
+//            activityInfo = new ActivityInfo();
+//            activityInfo.setActivityEPR(activityEpr);
+//            activityInfo.setActivityStatusDoc(activityStatus);
+//            jobExecutionContext.setProperty(PROP_ACTIVITY_INFO, activityInfo);
+//            
         } catch (UnknownActivityIdentifierFault e1) {
             throw new GFacProviderException(e1.getLocalizedMessage(), e1);
         }
