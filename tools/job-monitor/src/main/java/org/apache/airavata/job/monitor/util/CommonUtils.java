@@ -26,6 +26,7 @@ import org.apache.airavata.job.monitor.MonitorID;
 import org.apache.airavata.job.monitor.UserMonitorData;
 import org.apache.airavata.job.monitor.exception.AiravataMonitorException;
 import org.apache.airavata.schemas.gfac.GsisshHostType;
+import org.apache.airavata.schemas.gfac.UnicoreHostType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +43,14 @@ public class CommonUtils {
             return false;
         }
     }
+    
+    public static boolean isUnicoreHost(HostDescription host) {
+    	if (host.getType() instanceof UnicoreHostType) 
+    		return true; 
+    	else 
+    		return false;
+    }
+    
     public static boolean isSlurm(HostDescription host){
         if("slurm".equals(((GsisshHostType)host.getType()).getJobManager())){
          return true;

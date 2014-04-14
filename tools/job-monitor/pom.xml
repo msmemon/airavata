@@ -67,8 +67,28 @@
             <artifactId>sshj</artifactId>
             <version>0.8.0</version>
         </dependency>
-
-
+		
+		<!--  UNICORE -->
+		<!-- Unicore dependencies -->
+		<dependency>
+			<groupId>eu.unicore</groupId>
+			<artifactId>ogsabes-client</artifactId>
+			<version>1.7.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.santuario</groupId>
+					<artifactId>xmlsec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk16</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>

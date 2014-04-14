@@ -350,7 +350,10 @@ public class GFacImpl implements GFac {
                 throw new GFacException("An error occurred while creating GSI security context", e);
             }
             if (registeredHost.getType() instanceof GsisshHostType) {
-                GSIAuthenticationInfo authenticationInfo
+            	//s
+            	System.setProperty(Constants.TRUSTED_CERTIFICATE_SYSTEM_PROPERTY, "/home/m.memon/.globus/certificates");
+                
+            	GSIAuthenticationInfo authenticationInfo
                         = new MyProxyAuthenticationInfo(requestData.getMyProxyUserName(), requestData.getMyProxyPassword(), requestData.getMyProxyServerUrl(),
                         requestData.getMyProxyPort(), requestData.getMyProxyLifeTime(), System.getProperty(Constants.TRUSTED_CERTIFICATE_SYSTEM_PROPERTY));
                 GsisshHostType gsisshHostType = (GsisshHostType)registeredHost.getType();

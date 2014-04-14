@@ -20,6 +20,7 @@
 */
 package org.apache.airavata.client.tools;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,11 +35,13 @@ import org.apache.airavata.schemas.gfac.GlobusHostType;
 import org.apache.airavata.schemas.gfac.GsisshHostType;
 import org.apache.airavata.schemas.gfac.HpcApplicationDeploymentType;
 import org.apache.airavata.schemas.gfac.InputParameterType;
+import org.apache.airavata.schemas.gfac.JobDirectoryModeDocument.JobDirectoryMode;
 import org.apache.airavata.schemas.gfac.JobTypeType;
 import org.apache.airavata.schemas.gfac.OutputParameterType;
 import org.apache.airavata.schemas.gfac.ParameterType;
 import org.apache.airavata.schemas.gfac.ProjectAccountType;
 import org.apache.airavata.schemas.gfac.QueueType;
+import org.apache.airavata.schemas.gfac.UnicoreHostType;
 
 public class DocumentCreator {
 
@@ -174,7 +177,7 @@ public class DocumentCreator {
         name.setStringValue("EchoLocal");
         app.setApplicationName(name);
         ProjectAccountType projectAccountType = app.addNewProjectAccount();
-        projectAccountType.setProjectAccountNumber("sds128");
+        projectAccountType.setProjectAccountNumber("cmu128");
 
         QueueType queueType = app.addNewQueue();
         queueType.setQueueName("normal");
@@ -192,7 +195,7 @@ public class DocumentCreator {
         /*
            * Default tmp location
            */
-        String tempDir = "/home/ogce/scratch";
+        String tempDir = "/home/msmemon/scratch";
         app.setScratchWorkingDirectory(tempDir);
         app.setMaxMemory(10);
 
@@ -204,6 +207,98 @@ public class DocumentCreator {
         }
     }
 
+    public void createUNICOREBES() {
+        HostDescription host = new HostDescription(GsisshHostType.type);
+        host.getType().setHostAddress("zam1161v01.zam.kfa-juelich.de");
+        host.getType().setHostName("zam1161-unicore");
+        ((UnicoreHostType) host.getType()).setUnicoreBESEndPointArray(new String[]{"https://zam1161v01.zam.kfa-juelich.de:8002/INTEROP1/services/BESFactory?res=default_bes_factory"});;
+        ((UnicoreHostType) host.getType()).setJobDirectoryMode(JobDirectoryMode.SMS_BYTE_IO);
+
+        try {
+            airavataAPI.getApplicationManager().saveHostDescription(host);
+        } catch (AiravataAPIInvocationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        /*
+        * Service Description creation and saving
+        */
+        String serviceName = "SimpleEcho2";
+        ServiceDescription serv = new ServiceDescription();
+        serv.getType().setName(serviceName);
+
+        List<InputParameterType> inputList = new ArrayList<InputParameterType>();
+        List<OutputParameterType> outputList = new ArrayList<OutputParameterType>();
+
+
+        InputParameterType input = InputParameterType.Factory.newInstance();
+        input.setParameterName("echo_input");
+        ParameterType parameterType = input.addNewParameterType();
+        parameterType.setType(DataType.STRING);
+        parameterType.setName("String");
+
+        OutputParameterType output = OutputParameterType.Factory.newInstance();
+        output.setParameterName("echo_output");
+        ParameterType parameterType1 = output.addNewParameterType();
+        parameterType1.setType(DataType.STRING);
+        parameterType1.setName("String");
+
+        inputList.add(input);
+        outputList.add(output);
+
+        InputParameterType[] inputParamList = inputList.toArray(new InputParameterType[inputList.size()]);
+        OutputParameterType[] outputParamList = outputList.toArray(new OutputParameterType[outputList.size()]);
+
+        serv.getType().setInputParametersArray(inputParamList);
+        serv.getType().setOutputParametersArray(outputParamList);
+        try {
+            airavataAPI.getApplicationManager().saveServiceDescription(serv);
+        } catch (AiravataAPIInvocationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        /*
+            Application descriptor creation and saving
+         */
+        ApplicationDescription appDesc = new ApplicationDescription(HpcApplicationDeploymentType.type);
+        HpcApplicationDeploymentType appDepType = (HpcApplicationDeploymentType) appDesc.getType();
+        ApplicationDeploymentDescriptionType.ApplicationName name = ApplicationDeploymentDescriptionType.ApplicationName.Factory.newInstance();
+        name.setStringValue("EchoLocal");
+        appDepType.setApplicationName(name);
+        ProjectAccountType projectAccountType = appDepType.addNewProjectAccount();
+        projectAccountType.setProjectAccountNumber("");
+
+
+        appDepType.setCpuCount(1);
+        appDepType.setJobType(JobTypeType.SERIAL);
+        appDepType.setNodeCount(1);
+        appDepType.setProcessorsPerNode(1);
+        appDepType.setMaxWallTime(10);
+        /*
+           * Use bat file if it is compiled on Windows
+           */
+        appDepType.setExecutableLocation("/bin/date");
+
+        /*
+           * Default tmp location
+           */
+        String tempDir = "/home/msmemon/scratch";
+        appDepType.setScratchWorkingDirectory(tempDir);
+        appDepType.setInstalledParentPath("/opt/torque/bin/");
+		appDepType.setInputDataDirectory(tempDir + File.separator + "inputData");
+		appDepType.setOutputDataDirectory(tempDir + File.separator + "outputData");
+		
+		appDepType.setStandardOutput(appDepType.getOutputDataDirectory()+"/stdout");
+		
+		appDepType.setStandardError(appDepType.getOutputDataDirectory()+"/stderr");
+
+
+        try {
+            airavataAPI.getApplicationManager().saveApplicationDescription(serviceName, "zam1161v01.zam.kfa-juelich.de", appDesc);
+        } catch (AiravataAPIInvocationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+    
     public void createPBSDocsForOGCE() {
         HostDescription host = new HostDescription(GsisshHostType.type);
         host.getType().setHostAddress(hpcHostAddress);
@@ -280,7 +375,7 @@ public class DocumentCreator {
         /*
            * Default tmp location
            */
-        String tempDir = "/home/ogce/scratch";
+        String tempDir = "/home/msmemon/scratch";
      
         app.setScratchWorkingDirectory(tempDir);
         app.setInstalledParentPath("/opt/torque/bin/");
@@ -292,6 +387,9 @@ public class DocumentCreator {
         }
     }
 
+    
+    
+    
    
     public void createSlurmDocs() {
         HostDescription host = new HostDescription(GsisshHostType.type);
