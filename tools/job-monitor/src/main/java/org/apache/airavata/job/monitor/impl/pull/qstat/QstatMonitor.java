@@ -96,8 +96,8 @@ public class QstatMonitor extends PullMonitor {
     }
 
     /**
-     * This method will can invoke when PullMonitor needs to start
-     * and it has to invoke in the frequency specified below,
+     * This method is invoked when PullMonitor starts
+     * and it will invoke in the frequency specified below,
      *
      * @return if the start process is successful return true else false
      */

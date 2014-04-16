@@ -160,7 +160,7 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
             //TODO: not working
 //            saveApplicationJob(jobExecutionContext, jobDefinition, activityEpr.toString());
             jobDetails.setJobDescription(activityEpr.toString());
-            jobDetails.setJobID(jobId);
+            
             jobExecutionContext.setJobDetails(jobDetails);
             
             log.info(formatStatusMessage(activityEpr.getAddress().getStringValue(),
@@ -190,7 +190,7 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
 //                continue;
 //            }
 //
-//            ActivityStatusType activityStatus = null;
+            ActivityStatusType activityStatus = null;
 //            try {
 //                activityStatus = getStatus(factory, activityEpr);
 //            } catch (UnknownActivityIdentifierFault e) {
@@ -218,11 +218,11 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
 //                throw new GFacProviderException(experimentID + "Job Canceled");
 //            }
 //            
-//            ActivityInfo activityInfo;
-//            activityInfo = new ActivityInfo();
-//            activityInfo.setActivityEPR(activityEpr);
-//            activityInfo.setActivityStatusDoc(activityStatus);
-//            jobExecutionContext.setProperty(PROP_ACTIVITY_INFO, activityInfo);
+            ActivityInfo activityInfo;
+            activityInfo = new ActivityInfo();
+            activityInfo.setActivityEPR(activityEpr);
+            activityInfo.setActivityStatusDoc(activityStatus);
+            jobExecutionContext.setProperty(PROP_ACTIVITY_INFO, activityInfo);
 //            
         } catch (UnknownActivityIdentifierFault e1) {
             throw new GFacProviderException(e1.getLocalizedMessage(), e1);

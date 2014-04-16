@@ -6,14 +6,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.apache.airavata.gsi.ssh.api.authentication.AuthenticationInfo;
 import org.apache.airavata.gsi.ssh.impl.authentication.MyProxyAuthenticationInfo;
 import org.apache.airavata.job.monitor.HostMonitorData;
@@ -32,7 +28,6 @@ import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
-
 import de.fzj.unicore.bes.client.FactoryClient;
 import de.fzj.unicore.wsrflite.xmlbeans.WSUtilities;
 import eu.emi.security.authn.x509.impl.DirectoryCertChainValidator;
@@ -112,7 +107,8 @@ public class BESStatusChecker {
     public Map<String,JobState> getJobStatuses(String userName,List<MonitorID> monitorIDs) throws Exception {
         Map<String,JobState> statusMap = new TreeMap<String,JobState>();
         
-        List<EndpointReferenceType> eprt = new ArrayList<EndpointReferenceType>(monitorIDs.size()); 
+        List<EndpointReferenceType> eprt = new ArrayList<EndpointReferenceType>(monitorIDs.size());
+        
         for (MonitorID monitorID : monitorIDs) {
             eprt.add(EndpointReferenceType.Factory.parse(monitorID.getJobID()));
         }

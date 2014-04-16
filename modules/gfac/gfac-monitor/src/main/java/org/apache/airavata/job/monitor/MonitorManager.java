@@ -29,7 +29,7 @@ import org.apache.airavata.job.monitor.core.PushMonitor;
 import org.apache.airavata.job.monitor.event.MonitorPublisher;
 import org.apache.airavata.job.monitor.exception.AiravataMonitorException;
 import org.apache.airavata.job.monitor.impl.LocalJobMonitor;
-import org.apache.airavata.job.monitor.impl.bes.BESJobMonitor;
+import org.apache.airavata.job.monitor.impl.pull.bes.BESPullJobMonitor;
 import org.apache.airavata.job.monitor.impl.pull.qstat.QstatMonitor;
 import org.apache.airavata.job.monitor.impl.push.amqp.AMQPMonitor;
 import org.apache.airavata.job.monitor.util.CommonUtils;
@@ -37,6 +37,7 @@ import org.apache.airavata.persistance.registry.jpa.impl.RegistryImpl;
 import org.apache.airavata.schemas.gfac.GlobusHostType;
 import org.apache.airavata.schemas.gfac.GsisshHostType;
 import org.apache.airavata.schemas.gfac.SSHHostType;
+import org.apache.airavata.schemas.gfac.UnicoreHostType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,8 @@ public class MonitorManager {
     private List<PushMonitor> pushMonitors;   //todo we need to support multiple monitors dynamically
 
     private BlockingQueue<UserMonitorData> pullQueue;
+    
+    private BlockingQueue<UserMonitorData> besPullQueue;
 
     private BlockingQueue<MonitorID> pushQueue;
 
@@ -78,6 +81,7 @@ public class MonitorManager {
         pullMonitors = new ArrayList<PullMonitor>();
         pushMonitors = new ArrayList<PushMonitor>();
         pullQueue = new LinkedBlockingQueue<UserMonitorData>();
+        besPullQueue = new LinkedBlockingQueue<UserMonitorData>();
         pushQueue = new LinkedBlockingQueue<MonitorID>();
         finishQueue = new LinkedBlockingQueue<MonitorID>();
         localJobQueue = new LinkedBlockingQueue<MonitorID>();
@@ -117,9 +121,9 @@ public class MonitorManager {
      * todo may be we need to move this to some other class
      * @param monitor
      */
-    public void addBESMonitor(BESJobMonitor monitor) {
+    public void addBESMonitor(BESPullJobMonitor monitor) {
         monitor.setPublisher(this.getMonitorPublisher());
-        monitor.setQueue(this.getPullQueue());
+        monitor.setQueue(this.getBESPullQueue());
         addPullMonitor(monitor);
     }
     /**
@@ -181,12 +185,17 @@ public class MonitorManager {
                 pushQueue.put(monitorID);
                 finishQueue.put(monitorID);
             }
+        } 
+        else if (monitorID.getHost().getType() instanceof UnicoreHostType) {
+        	CommonUtils.addMonitortoQueue(besPullQueue, monitorID);
         } else if(monitorID.getHost().getType() instanceof GlobusHostType){
             logger.error("Monitoring does not support GlubusHostType resources");
         } else if(monitorID.getHost().getType() instanceof SSHHostType) {
             logger.error("Monitoring does not support GlubusHostType resources");
             localJobQueue.add(monitorID);
-        } else {
+        } 
+        
+        else {
             // we assume this is a type of localJobtype
             localJobQueue.add(monitorID);
         }
@@ -244,7 +253,16 @@ public class MonitorManager {
     public void setPullQueue(BlockingQueue<UserMonitorData> pullQueue) {
         this.pullQueue = pullQueue;
     }
+    
+    public BlockingQueue<UserMonitorData> getBESPullQueue() {
+        return besPullQueue;
+    }
+    
+    public void setBESPullQueue(BlockingQueue<UserMonitorData> besPullQueue) {
+        this.besPullQueue = besPullQueue;
+    }
 
+    
     public MonitorPublisher getMonitorPublisher() {
         return monitorPublisher;
     }

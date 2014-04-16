@@ -53,7 +53,7 @@ import org.apache.airavata.registry.api.AiravataUser;
 import org.apache.airavata.registry.api.Gateway;
 import org.apache.airavata.registry.api.PasswordCallback;
 import org.apache.airavata.registry.api.exception.RegistryException;
-import org.apache.airavata.registry.services.RegistryServiceStub;
+
 import org.apache.airavata.workflow.model.wf.WorkflowInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

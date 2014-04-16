@@ -33,6 +33,7 @@ import org.apache.airavata.job.monitor.core.PullMonitor;
 import org.apache.airavata.job.monitor.core.PushMonitor;
 import org.apache.airavata.job.monitor.exception.AiravataMonitorException;
 import org.apache.airavata.job.monitor.impl.LocalJobMonitor;
+import org.apache.airavata.job.monitor.impl.pull.bes.BESPullJobMonitor;
 import org.apache.airavata.job.monitor.impl.pull.qstat.QstatMonitor;
 import org.apache.airavata.job.monitor.impl.push.amqp.AMQPMonitor;
 import org.apache.airavata.model.workspace.experiment.Experiment;
@@ -49,6 +50,7 @@ import org.apache.airavata.schemas.gfac.GsisshHostType;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.lang.String;
 import java.util.Arrays;
 import java.util.List;
@@ -111,6 +113,8 @@ public class OrchestratorServerHandler implements OrchestratorService.Iface {
                     if (monitor instanceof PullMonitor) {
                         if (monitor instanceof QstatMonitor) {
                             monitorManager.addQstatMonitor((QstatMonitor) monitor);
+                        } else if (monitor instanceof BESPullJobMonitor) {
+                        	monitorManager.addBESMonitor((BESPullJobMonitor)monitor); 
                         }
                     } else if (monitor instanceof PushMonitor) {
                         if (monitor instanceof AMQPMonitor) {
@@ -123,7 +127,6 @@ public class OrchestratorServerHandler implements OrchestratorService.Iface {
                         log.error("Wrong class is given to primary Monitor");
                     }
                 }
-
             }
             monitorManager.registerListener(orchestrator);
             // Now Monitor Manager is properly configured, now we have to start the monitoring system.
