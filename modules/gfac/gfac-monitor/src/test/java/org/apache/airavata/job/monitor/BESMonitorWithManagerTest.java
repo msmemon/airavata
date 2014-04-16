@@ -1,6 +1,6 @@
 package org.apache.airavata.job.monitor;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,6 +15,7 @@ import org.apache.airavata.commons.gfac.type.HostDescription;
 import org.apache.airavata.gsi.ssh.impl.authentication.MyProxyAuthenticationInfo;
 import org.apache.airavata.job.monitor.exception.AiravataMonitorException;
 import org.apache.airavata.job.monitor.impl.pull.bes.BESPullJobMonitor;
+import org.apache.airavata.job.monitor.state.JobStatus;
 import org.apache.airavata.schemas.gfac.JobDirectoryModeDocument.JobDirectoryMode;
 import org.apache.airavata.schemas.gfac.UnicoreHostType;
 import org.ggf.schemas.bes.x2006.x08.besFactory.CreateActivityDocument;
@@ -82,8 +83,6 @@ public class BESMonitorWithManagerTest {
           } catch (AiravataMonitorException e) {
               e.printStackTrace();
           }
-
-
     }
     
     private DefaultClientConfiguration getDefaultClientConfig(GlobusGSSCredentialImpl gss) throws Exception{
@@ -118,6 +117,7 @@ public class BESMonitorWithManagerTest {
     @Test
     public void testBESMonitor() throws Exception {
     	/* now have to submit a job to some machine and add that job to the queue */
+    	//sme changes
         //Create authentication
     	MyProxyAuthenticationInfo authenticationInfo
         = new MyProxyAuthenticationInfo(myProxyUserName, myProxyPassword, "myproxy.teragrid.org",
@@ -158,7 +158,7 @@ public class BESMonitorWithManagerTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        
     }
 
 

@@ -119,7 +119,6 @@ public class OrchestratorClientSample {
                     } catch (Exception e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
-
                     try {
                         orchestratorClient.launchExperiment(expId);
                     } catch (TException e) {
@@ -187,15 +186,4 @@ public class OrchestratorClientSample {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }

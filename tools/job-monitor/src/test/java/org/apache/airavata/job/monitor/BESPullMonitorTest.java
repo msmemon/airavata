@@ -28,6 +28,8 @@ import org.apache.airavata.gsi.ssh.util.CommonUtils;
 import org.apache.airavata.job.monitor.event.MonitorPublisher;
 import org.apache.airavata.job.monitor.impl.pull.bes.BESPullJobMonitor;
 import org.apache.airavata.job.monitor.impl.pull.qstat.QstatMonitor;
+import org.apache.airavata.job.monitor.state.JobStatus;
+import org.apache.airavata.model.workspace.experiment.JobState;
 import org.apache.airavata.schemas.gfac.GsisshHostType;
 import org.apache.airavata.schemas.gfac.JobDirectoryModeDocument.JobDirectoryMode;
 import org.apache.airavata.schemas.gfac.UnicoreHostType;
@@ -40,10 +42,12 @@ import org.ggf.schemas.jsdl.x2005.x11.jsdlPosix.FileNameType;
 import org.ggf.schemas.jsdl.x2005.x11.jsdlPosix.POSIXApplicationDocument;
 import org.globus.gsi.gssapi.GlobusGSSCredentialImpl;
 import org.ietf.jgss.GSSCredential;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 import org.w3.x2005.x08.addressing.EndpointReferenceType;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import de.fzj.unicore.bes.client.FactoryClient;
 import de.fzj.unicore.wsrflite.xmlbeans.WSUtilities;
@@ -109,7 +113,9 @@ public class BESPullMonitorTest {
       } catch (Exception e) {
           e.printStackTrace();
       }
-
+      
+      monitorPublisher.registerListener(this);
+      
     }
 
     
@@ -210,12 +216,13 @@ public class BESPullMonitorTest {
         }
 
         try {
-        	monitorThread.join(5000);
+        	monitorThread.join(1000);
             Iterator<UserMonitorData> iterator = pullQueue.iterator();
             UserMonitorData next = iterator.next();
             monitorID = next.getHostMonitorData().get(0).getMonitorIDs().get(0);
             System.out.println("Job Status: "+ monitorID.getStatus());
             assertNotNull(monitorID.getStatus());
+            testCaseShutDown(monitorID.getStatus());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -249,5 +256,11 @@ public class BESPullMonitorTest {
 		secProperties.getETDSettings().setExtendTrustDelegation(true);
     	return secProperties;
     }
-
+    
+    @Subscribe
+    public void testCaseShutDown(JobState status) {
+        System.out.println("Hello");
+        assertNotNull(status);
+        monitorThread.stop();
+    }
 }
