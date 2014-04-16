@@ -3,6 +3,7 @@ package org.apache.airavata.job.monitor.impl.pull.bes;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -20,7 +21,6 @@ import org.apache.airavata.job.monitor.impl.pull.qstat.ResourceConnection;
 import org.apache.airavata.job.monitor.state.JobStatus;
 import org.apache.airavata.job.monitor.util.CommonUtils;
 import org.apache.airavata.model.workspace.experiment.JobState;
-import org.apache.airavata.schemas.gfac.GsisshHostType;
 import org.apache.airavata.schemas.gfac.UnicoreHostType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,24 +34,32 @@ public class BESPullJobMonitor extends PullMonitor {
 	
    private final static Logger logger = LoggerFactory.getLogger(QstatMonitor.class);
 
-   private BlockingQueue<UserMonitorData> queue;
+   private BlockingQueue<UserMonitorData> userMonitorQueue;
 
    private boolean startPulling = false;
 
    private MonitorPublisher publisher;
    
-//   private Map<String, ResourceConnection> connections;
-   
    private Map<String, BESStatusChecker> connections;
 
-
+   
+   public BESPullJobMonitor() {
+	   connections = new HashMap<String, BESStatusChecker>();
+   }
+   
+   public BESPullJobMonitor(BlockingQueue<UserMonitorData> queue, MonitorPublisher publisher) {
+	   this();
+       this.userMonitorQueue = queue;
+       this.publisher = publisher;
+   }
+   
    public void run() {
 	   this.startPulling = true;
        while (this.startPulling && !ServerSettings.isStopAllThreads()) {
            try {
                startPulling();
                // After finishing one iteration of the full queue this thread sleeps 1 second
-               Thread.sleep(10000);
+               Thread.sleep(3000);
            } catch (Exception e){
                // we catch all the exceptions here because no matter what happens we do not stop running this
                // thread, but ideally we should report proper error messages, but this is handled in startPulling
@@ -70,14 +78,14 @@ public boolean startPulling() throws AiravataMonitorException {
     JobStatus jobStatus = new JobStatus();
     MonitorID currentMonitorID = null;
     try {
-        take = this.queue.take();
+        take = userMonitorQueue.take();
         List<MonitorID> completedJobs = new ArrayList<MonitorID>();
         List<HostMonitorData> hostMonitorData = take.getHostMonitorData();
         for (HostMonitorData iHostMonitorData : hostMonitorData) {
             if (iHostMonitorData.getHost().getType() instanceof UnicoreHostType) {
+            	System.out.println("fetching job status");
                 UnicoreHostType unicoreHostType = (UnicoreHostType) iHostMonitorData.getHost().getType();
                 String hostName = unicoreHostType.getUnicoreBESEndPointArray()[0];
-                
 //                ResourceConnection connection = null;
                 BESStatusChecker connection = null;
                 if (connections.containsKey(hostName)) {
@@ -91,6 +99,7 @@ public boolean startPulling() throws AiravataMonitorException {
                 
                 List<MonitorID> monitorID = iHostMonitorData.getMonitorIDs();
                 Map<String, JobState> jobStatuses = connection.getJobStatuses(take.getUserName(), monitorID);
+                System.out.println("printing job statuses");
                 for (MonitorID iMonitorID : monitorID) {
                     currentMonitorID = iMonitorID;
                     iMonitorID.setStatus(jobStatuses.get(iMonitorID.getJobID()));
@@ -117,21 +126,21 @@ public boolean startPulling() throws AiravataMonitorException {
                     }
                 }
             } else {
-                logger.debug("Qstat Monitor doesn't handle non-gsissh hosts");
+                logger.debug("BES Monitor doesn't support non-UNICORE hosts");
             }
         }
         // We have finished all the HostMonitorData object in userMonitorData, now we need to put it back
         // now the userMonitorData goes back to the tail of the queue
-        queue.put(take);
+        userMonitorQueue.put(take);
         // cleaning up the completed jobs, this method will remove some of the userMonitorData from the queue if
         // they become empty
         for(MonitorID completedJob:completedJobs){
-            CommonUtils.removeMonitorFromQueue(queue,completedJob);
+            CommonUtils.removeMonitorFromQueue(userMonitorQueue,completedJob);
         }
     } catch (InterruptedException e) {
-        if (!this.queue.contains(take)) {
+        if (!this.userMonitorQueue.contains(take)) {
             try {
-                this.queue.put(take);
+                this.userMonitorQueue.put(take);
             } catch (InterruptedException e1) {
                 e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
@@ -146,11 +155,11 @@ public boolean startPulling() throws AiravataMonitorException {
             publisher.publish(jobStatus);
         } else if (e.getMessage().contains("illegally formed job identifier")) {
             logger.error("Wrong job ID is given so dropping the job from monitoring system");
-        } else if (!this.queue.contains(take)) {   // we put the job back to the queue only if its state is not unknown
+        } else if (!this.userMonitorQueue.contains(take)) {   // we put the job back to the queue only if its state is not unknown
             if (currentMonitorID.getFailedCount() < 2) {
                 try {
                     currentMonitorID.setFailedCount(currentMonitorID.getFailedCount() + 1);
-                    this.queue.put(take);
+                    this.userMonitorQueue.put(take);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
@@ -164,7 +173,7 @@ public boolean startPulling() throws AiravataMonitorException {
         if (currentMonitorID.getFailedCount() < 3) {
             try {
                 currentMonitorID.setFailedCount(currentMonitorID.getFailedCount() + 1);
-                this.queue.put(take);
+                this.userMonitorQueue.put(take);
                 // if we get a wrong status we wait for a while and request again
                 Thread.sleep(10000);
             } catch (InterruptedException e1) {
@@ -187,11 +196,11 @@ public boolean stopPulling() throws AiravataMonitorException {
 
 
 public BlockingQueue<UserMonitorData> getQueue() {
-	return queue;
+	return userMonitorQueue;
 }
 
 
 public void setQueue(BlockingQueue<UserMonitorData> queue) {
-	this.queue = queue;
+	this.userMonitorQueue = queue;
 }
 }
