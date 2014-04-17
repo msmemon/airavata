@@ -281,16 +281,15 @@ public class DocumentCreator {
         /*
            * Default tmp location
            */
-        String tempDir = "/home/msmemon/scratch";
-        appDepType.setScratchWorkingDirectory(tempDir);
-        appDepType.setInstalledParentPath("/opt/torque/bin/");
+        String tempDir = "/tmp";
+//        appDepType.setScratchWorkingDirectory(tempDir);
+//        appDepType.setInstalledParentPath("/opt/torque/bin/");
 		appDepType.setInputDataDirectory(tempDir + File.separator + "inputData");
 		appDepType.setOutputDataDirectory(tempDir + File.separator + "outputData");
 		
 		appDepType.setStandardOutput(appDepType.getOutputDataDirectory()+"/stdout");
 		
 		appDepType.setStandardError(appDepType.getOutputDataDirectory()+"/stderr");
-
 
         try {
             airavataAPI.getApplicationManager().saveApplicationDescription(serviceName, "zam1161v01.zam.kfa-juelich.de", appDesc);

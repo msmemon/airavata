@@ -20,7 +20,9 @@
 */
 package org.apache.airavata.client.airavata;
 
-import org.apache.airavata.registry.services.RegistryServiceStub;
+
+
+import org.apache.airavata.client.RegistryServiceStub;
 import org.junit.Test;
 
 public class AiravataClientTest {

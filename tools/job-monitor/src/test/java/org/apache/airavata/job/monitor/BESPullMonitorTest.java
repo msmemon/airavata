@@ -214,18 +214,19 @@ public class BESPullMonitorTest {
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        testCaseShutDown(monitorID.getStatus());
 
-        try {
-        	monitorThread.join(1000);
-            Iterator<UserMonitorData> iterator = pullQueue.iterator();
-            UserMonitorData next = iterator.next();
-            monitorID = next.getHostMonitorData().get(0).getMonitorIDs().get(0);
-            System.out.println("Job Status: "+ monitorID.getStatus());
-            assertNotNull(monitorID.getStatus());
-            testCaseShutDown(monitorID.getStatus());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//        	monitorThread.join(1000);
+//            Iterator<UserMonitorData> iterator = pullQueue.iterator();
+//            UserMonitorData next = iterator.next();
+//            monitorID = next.getHostMonitorData().get(0).getMonitorIDs().get(0);
+//            System.out.println("Job Status: "+ monitorID.getStatus());
+//            assertNotNull(monitorID.getStatus());
+//            testCaseShutDown(monitorID.getStatus());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
     
     private DefaultClientConfiguration getDefaultClientConfig(GlobusGSSCredentialImpl gss) throws Exception{

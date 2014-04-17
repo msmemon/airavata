@@ -464,7 +464,7 @@
                 <module>modules/workflow-model</module>
                 <module>modules/commons</module>
                 <module>modules/registry</module>
-                <!-- module>modules/airavata-client</module>-->
+                <module>modules/airavata-client</module>
                 <module>modules/security</module>
                 <module>modules/credential-store</module>
                 <module>modules/orchestrator</module>
@@ -589,13 +589,13 @@
                 </plugins>
             </build>
             <modules>
+      		<module>modules/airavata-client</module>
                 <module>airavata-api</module>
                 <module>modules/gfac</module>
                 <module>modules/ws-messenger</module>
                 <module>modules/workflow-model</module>
                 <module>modules/commons</module>
                 <module>modules/registry</module>
-                <module>modules/airavata-client</module>
                 <module>modules/security</module>
                 <module>modules/credential-store</module>
                 <module>modules/orchestrator</module>

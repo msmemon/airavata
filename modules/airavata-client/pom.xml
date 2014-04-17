@@ -60,9 +60,9 @@
         </dependency>
     </dependencies>
 
-    <build>
+      <build>
         <plugins>
-            <plugin>
+             <plugin>
                 <groupId>org.apache.axis2</groupId>
                 <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
                 <version>${axis2.version}</version>
@@ -83,6 +83,15 @@
                     </execution>
                 </executions>
             </plugin>
+             <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>2.3.2</version>
+                        <configuration>
+                            <source>1.6</source>
+                            <target>1.6</target>
+                        </configuration>
+                    </plugin>
         </plugins>
         <resources>
             <resource>

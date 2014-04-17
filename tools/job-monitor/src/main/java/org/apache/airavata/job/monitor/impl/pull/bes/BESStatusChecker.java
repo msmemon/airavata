@@ -86,7 +86,7 @@ public class BESStatusChecker {
 				secProperties = new DefaultClientConfiguration(dcValidator, cred);
 	//			setExtraSettings();
 			}
-			catch (GeneralSecurityException | IOException e) {
+			catch (GeneralSecurityException e) {
 				throw new Exception("Cannot create UNICORE client's security configuration.", e); 
 			}		
 			finally{
