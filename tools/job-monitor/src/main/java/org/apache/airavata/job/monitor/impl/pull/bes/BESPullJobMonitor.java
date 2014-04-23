@@ -131,6 +131,8 @@ public boolean startPulling() throws AiravataMonitorException {
         userMonitorQueue.put(take);
         // cleaning up the completed jobs, this method will remove some of the userMonitorData from the queue if
         // they become empty
+        
+        
         for(MonitorID completedJob:completedJobs){
             CommonUtils.removeMonitorFromQueue(userMonitorQueue,completedJob);
         }
@@ -141,7 +143,7 @@ public boolean startPulling() throws AiravataMonitorException {
             } catch (InterruptedException e1) {
                 e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-        }
+        } 
         logger.error("Error handling the job with Job ID:" + currentMonitorID.getJobID());
         throw new AiravataMonitorException(e);
     } catch (Exception e) {
