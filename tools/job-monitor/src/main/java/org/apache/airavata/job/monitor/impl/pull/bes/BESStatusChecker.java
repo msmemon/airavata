@@ -110,6 +110,7 @@ public class BESStatusChecker {
         List<EndpointReferenceType> eprt = new ArrayList<EndpointReferenceType>(monitorIDs.size());
         
         for (MonitorID monitorID : monitorIDs) {
+        	System.out.println(monitorID.getJobID());
             eprt.add(EndpointReferenceType.Factory.parse(monitorID.getJobID()));
         }
 
@@ -126,7 +127,6 @@ public class BESStatusChecker {
 	             statusMap.put(monitorID.getJobID(),getApplicationJobStatus(asType));
 	         }
         }
-
         return statusMap;
     }
     
@@ -177,7 +177,4 @@ public class BESStatusChecker {
         return JobState.UNKNOWN;
     }
 
-    
-
-	
 }

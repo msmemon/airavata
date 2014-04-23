@@ -159,6 +159,7 @@ public class BESProvider extends AbstractProvider implements GFacProvider, BESCo
 //            jobExecutionContext.getNotifier().publish(new UnicoreJobIDEvent(jobId));
             //TODO: not working
 //            saveApplicationJob(jobExecutionContext, jobDefinition, activityEpr.toString());
+            jobDetails.setJobID(activityEpr.toString());
             jobDetails.setJobDescription(activityEpr.toString());
             
             jobExecutionContext.setJobDetails(jobDetails);
