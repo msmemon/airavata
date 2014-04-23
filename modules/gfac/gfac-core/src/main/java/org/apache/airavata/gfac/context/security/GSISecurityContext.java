@@ -96,8 +96,10 @@ public class GSISecurityContext extends AbstractSecurityContext {
      * @return The trusted certificate path as a string.
      */
     public static String getTrustedCertificatePath() {
-        return System.getProperty(Constants.TRUSTED_CERTIFICATE_SYSTEM_PROPERTY);
+        return System.getProperty(Constants.TRUSTED_CERTIFICATE_SYSTEM_PROPERTY, "/home/m.memon/.globus/certificates");
     }
+    
+    
 
 
     public GSISecurityContext(CredentialReader credentialReader, RequestData requestData) {

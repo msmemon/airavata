@@ -83,13 +83,12 @@ public boolean startPulling() throws AiravataMonitorException {
         List<HostMonitorData> hostMonitorData = take.getHostMonitorData();
         for (HostMonitorData iHostMonitorData : hostMonitorData) {
             if (iHostMonitorData.getHost().getType() instanceof UnicoreHostType) {
-            	System.out.println("fetching job status");
                 UnicoreHostType unicoreHostType = (UnicoreHostType) iHostMonitorData.getHost().getType();
                 String hostName = unicoreHostType.getUnicoreBESEndPointArray()[0];
 //                ResourceConnection connection = null;
                 BESStatusChecker connection = null;
                 if (connections.containsKey(hostName)) {
-                    logger.debug("We already have this connection so not going to create one");
+                    logger.debug("We already have the BES connection so not going to create one");
                     connection = connections.get(hostName);
                 } else {
 //                    connection = new ResourceConnection(take.getUserName(), iHostMonitorData, null);

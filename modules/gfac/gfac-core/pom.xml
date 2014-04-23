@@ -27,7 +27,6 @@
 	<url>http://airavata.apache.org/</url>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>org.jglobus</groupId>
 			<artifactId>gss</artifactId>

@@ -69,7 +69,8 @@ public class OrchestratorClientSample {
 //            documentCreator.createGramDocs();
 //            documentCreator.createPBSDocsForOGCE();
             documentCreator.createUNICOREBES();
-            storeExperimentDetail();
+//            storeExperimentDetail();
+            storeUnicoreExperimentDetail();
         } catch (ApplicationSettingsException e) {
             e.printStackTrace();
         }
@@ -137,9 +138,6 @@ public class OrchestratorClientSample {
 
 
     public static void storeUnicoreExperimentDetail() {
-        for (int i = 0; i < NUM_CONCURRENT_REQUESTS; i++) {
-            Thread thread = new Thread() {
-                public void run() {
                     List<DataObjectType> exInputs = new ArrayList<DataObjectType>();
                     DataObjectType input = new DataObjectType();
                     input.setKey("echo_input");
@@ -160,7 +158,7 @@ public class OrchestratorClientSample {
                     
                     //ss
                     ComputationalResourceScheduling scheduling = ExperimentModelUtil.createComputationResourceScheduling("trestles.sdsc.edu", 1, 1, 1, "normal", 0, 0, 1, "cmu128");
-                    scheduling.setResourceHostId("zam1161-unicore");
+                    scheduling.setResourceHostId("zam1161v01.zam.kfa-juelich.de");
                     UserConfigurationData userConfigurationData = new UserConfigurationData();
                     userConfigurationData.setComputationalResourceScheduling(scheduling);
                     simpleExperiment.setUserConfigurationData(userConfigurationData);
@@ -176,14 +174,6 @@ public class OrchestratorClientSample {
                     } catch (TException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
-                }
-            };
-            thread.start();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
         }
     }
-}
+

@@ -40,7 +40,6 @@ public class DataServiceInfo implements BESConstants, Serializable {
 				EndpointReferenceType s = (EndpointReferenceType) c
 						.getProperty(PROP_SMS_EPR);
 				dataServiceUrl = s.getAddress().getStringValue();
-				
 				break;
 			case JobDirectoryMode.INT_GRID_FTP:
 			case JobDirectoryMode.INT_RNS_BYTE_IO:

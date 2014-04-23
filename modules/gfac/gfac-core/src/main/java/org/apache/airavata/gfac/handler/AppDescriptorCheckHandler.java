@@ -38,48 +38,49 @@ public class AppDescriptorCheckHandler implements GFacHandler {
 
     public void invoke(JobExecutionContext jobExecutionContext) throws GFacHandlerException {
         logger.info("Invoking ApplicationDescriptorCheckHandler ...");
-        ApplicationDescription app = jobExecutionContext.getApplicationContext().getApplicationDeploymentDescription();
-        ApplicationDeploymentDescriptionType appDesc = app.getType();
-        if (appDesc.getScratchWorkingDirectory() == null) {
-            appDesc.setScratchWorkingDirectory("/tmp");
-        }
-
-        /*
-        * Working dir
-        */
-        if (appDesc.getStaticWorkingDirectory() == null || "null".equals(appDesc.getStaticWorkingDirectory())) {
-            String date = new Date().toString();
-            date = date.replaceAll(" ", "_");
-            date = date.replaceAll(":", "_");
-
-            String tmpDir = appDesc.getScratchWorkingDirectory() + File.separator
-                    + jobExecutionContext.getServiceName() + "_" + date + "_" + UUID.randomUUID();
-
-            appDesc.setStaticWorkingDirectory(tmpDir);
-        }
-        //FIXME: Move this input/output to application descrpitor 
-        /*
-        * Input and Output Directory
-        */
-        if (appDesc.getInputDataDirectory() == null || "".equals(appDesc.getInputDataDirectory())) {
-            appDesc.setInputDataDirectory(appDesc.getStaticWorkingDirectory() + File.separator + Constants.INPUT_DATA_DIR_VAR_NAME);
-        }
-        if (appDesc.getOutputDataDirectory() == null || "".equals(appDesc.getOutputDataDirectory())) {
-            appDesc.setOutputDataDirectory(appDesc.getStaticWorkingDirectory() + File.separator + Constants.OUTPUT_DATA_DIR_VAR_NAME);
-        }
-
-        /*
-        * Stdout and Stderr for Shell
-        */
-        if (appDesc.getStandardOutput() == null || "".equals(appDesc.getStandardOutput())) {
-            appDesc.setStandardOutput(appDesc.getStaticWorkingDirectory() + File.separator
-                    + appDesc.getApplicationName().getStringValue() + ".stdout");
-        }
-        if (appDesc.getStandardError() == null || "".equals(appDesc.getStandardError())) {
-            appDesc.setStandardError(appDesc.getStaticWorkingDirectory() + File.separator
-                    + appDesc.getApplicationName().getStringValue() + ".stderr");
-        }
-        jobExecutionContext.getApplicationContext().setApplicationDeploymentDescription(app);
+        
+//        ApplicationDescription app = jobExecutionContext.getApplicationContext().getApplicationDeploymentDescription();
+//        ApplicationDeploymentDescriptionType appDesc = app.getType();
+//        if (appDesc.getScratchWorkingDirectory() == null) {
+//            appDesc.setScratchWorkingDirectory("/tmp");
+//        }
+//
+//        /*
+//        * Working dir
+//        */
+//        if (appDesc.getStaticWorkingDirectory() == null || "null".equals(appDesc.getStaticWorkingDirectory())) {
+//            String date = new Date().toString();
+//            date = date.replaceAll(" ", "_");
+//            date = date.replaceAll(":", "_");
+//
+//            String tmpDir = appDesc.getScratchWorkingDirectory() + File.separator
+//                    + jobExecutionContext.getServiceName() + "_" + date + "_" + UUID.randomUUID();
+//
+//            appDesc.setStaticWorkingDirectory(tmpDir);
+//        }
+//        //FIXME: Move this input/output to application descrpitor 
+//        /*
+//        * Input and Output Directory
+//        */
+//        if (appDesc.getInputDataDirectory() == null || "".equals(appDesc.getInputDataDirectory())) {
+//            appDesc.setInputDataDirectory(appDesc.getStaticWorkingDirectory() + File.separator + Constants.INPUT_DATA_DIR_VAR_NAME);
+//        }
+//        if (appDesc.getOutputDataDirectory() == null || "".equals(appDesc.getOutputDataDirectory())) {
+//            appDesc.setOutputDataDirectory(appDesc.getStaticWorkingDirectory() + File.separator + Constants.OUTPUT_DATA_DIR_VAR_NAME);
+//        }
+//
+//        /*
+//        * Stdout and Stderr for Shell
+//        */
+//        if (appDesc.getStandardOutput() == null || "".equals(appDesc.getStandardOutput())) {
+//            appDesc.setStandardOutput(appDesc.getStaticWorkingDirectory() + File.separator
+//                    + appDesc.getApplicationName().getStringValue() + ".stdout");
+//        }
+//        if (appDesc.getStandardError() == null || "".equals(appDesc.getStandardError())) {
+//            appDesc.setStandardError(appDesc.getStaticWorkingDirectory() + File.separator
+//                    + appDesc.getApplicationName().getStringValue() + ".stderr");
+//        }
+//        jobExecutionContext.getApplicationContext().setApplicationDeploymentDescription(app);
     }
 
     public void initProperties(Map<String, String> properties) throws GFacHandlerException, GFacException {

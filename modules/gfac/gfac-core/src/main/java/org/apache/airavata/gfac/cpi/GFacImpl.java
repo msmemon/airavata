@@ -34,6 +34,7 @@ import org.apache.airavata.gfac.context.JobExecutionContext;
 import org.apache.airavata.gfac.context.MessageContext;
 import org.apache.airavata.gfac.context.security.GSISecurityContext;
 import org.apache.airavata.gfac.context.security.SSHSecurityContext;
+import org.apache.airavata.gfac.context.security.UNICORESecurityContext;
 import org.apache.airavata.gfac.handler.GFacHandler;
 import org.apache.airavata.gfac.handler.GFacHandlerConfig;
 import org.apache.airavata.gfac.handler.GFacHandlerException;
@@ -340,8 +341,7 @@ public class GFacImpl implements GFac {
     private void addSecurityContext(HostDescription registeredHost, Properties configurationProperties,
                                     JobExecutionContext jobExecutionContext) throws GFacException {
         RequestData requestData;
-        if (registeredHost.getType() instanceof GlobusHostType || registeredHost.getType() instanceof UnicoreHostType
-                || registeredHost.getType() instanceof GsisshHostType) {
+        if (registeredHost.getType() instanceof GlobusHostType || registeredHost.getType() instanceof GsisshHostType) {
             GSISecurityContext context = null;
             requestData = new RequestData("default");
             try {
@@ -386,6 +386,18 @@ public class GFacImpl implements GFac {
             
             jobExecutionContext.addSecurityContext(GSISecurityContext.GSI_SECURITY_CONTEXT, context);
         } 
+        
+        else if (registeredHost.getType() instanceof UnicoreHostType) {
+        	UNICORESecurityContext context = null;
+            requestData = new RequestData("default");
+            try {
+                context = new UNICORESecurityContext(null, requestData);
+            } catch (Exception e) {
+                throw new GFacException("An error occurred while creating GSI security context", e);
+            }
+            jobExecutionContext.addSecurityContext(UNICORESecurityContext.UNICORE_SECURITY_CONTEXT, context);
+        }
+        
         else if (registeredHost.getType() instanceof Ec2HostType) {
             //todo fixthis amazon securitycontext
 //               if (this.configuration.getAmazonSecurityContext() != null) {

@@ -208,9 +208,9 @@ public class DocumentCreator {
     }
 
     public void createUNICOREBES() {
-        HostDescription host = new HostDescription(GsisshHostType.type);
+        HostDescription host = new HostDescription(UnicoreHostType.type);
         host.getType().setHostAddress("zam1161v01.zam.kfa-juelich.de");
-        host.getType().setHostName("zam1161-unicore");
+        host.getType().setHostName("zam1161v01.zam.kfa-juelich.de");
         ((UnicoreHostType) host.getType()).setUnicoreBESEndPointArray(new String[]{"https://zam1161v01.zam.kfa-juelich.de:8002/INTEROP1/services/BESFactory?res=default_bes_factory"});;
         ((UnicoreHostType) host.getType()).setJobDirectoryMode(JobDirectoryMode.SMS_BYTE_IO);
 
@@ -381,6 +381,7 @@ public class DocumentCreator {
 
         try {
             airavataAPI.getApplicationManager().saveApplicationDescription(serviceName, gsiSshHostName, appDesc);
+            
         } catch (AiravataAPIInvocationException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

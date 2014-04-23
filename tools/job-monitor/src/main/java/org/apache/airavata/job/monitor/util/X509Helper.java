@@ -22,7 +22,7 @@ package org.apache.airavata.job.monitor.util;
 
 import org.apache.airavata.common.utils.ServerSettings;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMReader;
+import org.bouncycastle.util.io.pem.PemReader;
 
 import java.io.*;
 import java.security.*;
@@ -82,8 +82,8 @@ public class X509Helper {
         //System.out.println(privKeyPEM);
 
         // using BouncyCastle
-        PEMReader pemParser = new PEMReader(new StringReader(privKeyPEM));
-        Object object = pemParser.readObject();
+        PemReader pemParser = new PemReader(new StringReader(privKeyPEM));
+        Object object = pemParser.readPemObject();
 
         PrivateKey privKey = null;
         if(object instanceof KeyPair){
