@@ -16,8 +16,6 @@ import org.apache.airavata.job.monitor.UserMonitorData;
 import org.apache.airavata.job.monitor.core.PullMonitor;
 import org.apache.airavata.job.monitor.event.MonitorPublisher;
 import org.apache.airavata.job.monitor.exception.AiravataMonitorException;
-import org.apache.airavata.job.monitor.impl.pull.qstat.QstatMonitor;
-import org.apache.airavata.job.monitor.impl.pull.qstat.ResourceConnection;
 import org.apache.airavata.job.monitor.state.JobStatus;
 import org.apache.airavata.job.monitor.util.CommonUtils;
 import org.apache.airavata.model.workspace.experiment.JobState;
@@ -32,7 +30,7 @@ import org.slf4j.LoggerFactory;
 */
 public class BESPullJobMonitor extends PullMonitor {
 	
-   private final static Logger logger = LoggerFactory.getLogger(QstatMonitor.class);
+   private final static Logger logger = LoggerFactory.getLogger(BESPullJobMonitor.class);
 
    private BlockingQueue<UserMonitorData> userMonitorQueue;
 
@@ -146,28 +144,6 @@ public boolean startPulling() throws AiravataMonitorException {
         }
         logger.error("Error handling the job with Job ID:" + currentMonitorID.getJobID());
         throw new AiravataMonitorException(e);
-    } catch (SSHApiException e) {
-        logger.error(e.getMessage());
-        if (e.getMessage().contains("Unknown Job Id Error")) {
-            // in this case job is finished or may be the given job ID is wrong
-            jobStatus.setState(JobState.UNKNOWN);
-            publisher.publish(jobStatus);
-        } else if (e.getMessage().contains("illegally formed job identifier")) {
-            logger.error("Wrong job ID is given so dropping the job from monitoring system");
-        } else if (!this.userMonitorQueue.contains(take)) {   // we put the job back to the queue only if its state is not unknown
-            if (currentMonitorID.getFailedCount() < 2) {
-                try {
-                    currentMonitorID.setFailedCount(currentMonitorID.getFailedCount() + 1);
-                    this.userMonitorQueue.put(take);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            } else {
-                logger.error(e.getMessage());
-                logger.error("Tried to monitor the job 3 times, so dropping of the the Job with ID: " + currentMonitorID.getJobID());
-            }
-        }
-        throw new AiravataMonitorException("Error retrieving the job status", e);
     } catch (Exception e) {
         if (currentMonitorID.getFailedCount() < 3) {
             try {
@@ -192,6 +168,8 @@ public boolean startPulling() throws AiravataMonitorException {
 public boolean stopPulling() throws AiravataMonitorException {
 	return false;
 }
+
+
 
 
 public BlockingQueue<UserMonitorData> getQueue() {
