@@ -16,8 +16,6 @@ import org.apache.airavata.job.monitor.UserMonitorData;
 import org.apache.airavata.job.monitor.core.PullMonitor;
 import org.apache.airavata.job.monitor.event.MonitorPublisher;
 import org.apache.airavata.job.monitor.exception.AiravataMonitorException;
-import org.apache.airavata.job.monitor.impl.pull.qstat.QstatMonitor;
-import org.apache.airavata.job.monitor.impl.pull.qstat.ResourceConnection;
 import org.apache.airavata.job.monitor.state.JobStatus;
 import org.apache.airavata.job.monitor.util.CommonUtils;
 import org.apache.airavata.model.workspace.experiment.JobState;
@@ -32,7 +30,7 @@ import org.slf4j.LoggerFactory;
 */
 public class BESPullJobMonitor extends PullMonitor {
 	
-   private final static Logger logger = LoggerFactory.getLogger(QstatMonitor.class);
+   private final static Logger logger = LoggerFactory.getLogger(BESPullJobMonitor.class);
 
    private BlockingQueue<UserMonitorData> userMonitorQueue;
 
